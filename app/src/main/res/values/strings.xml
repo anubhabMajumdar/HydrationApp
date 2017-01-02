@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">HydrationApp</string>
     <string name="first_time">Tell me about your hydration plan!</string>
+    <string name="hydration_setting_time">Time Interval</string>
+    <string name="hydration_setting_start_time">Start of the day</string>
+    <string name="hydration_setting_end_time">End of the day</string>
+    <string name="hydration_setting_notification_interval">Notification Interval</string>
 </resources>
