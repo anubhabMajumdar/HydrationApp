@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">HydrationApp</string>
+    <string name="first_time">Tell me about your hydration plan!</string>
+</resources>
