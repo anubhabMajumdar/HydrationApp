@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.anubhabmajumdar.hydrationapp.HydrationSettingActivity">
 
-    <TextView
+     <TextView
         android:text="Start of day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,5 +33,28 @@
         android:id="@+id/start_of_day"
         android:text="Select time"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <TextView
+        android:text="End of day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:id="@+id/end_day"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:layout_below="@+id/start_of_day"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Select time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:id="@+id/end_of_day"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:layout_below="@+id/end_day"
+        android:layout_alignLeft="@+id/start_of_day"
+        android:layout_alignStart="@+id/start_of_day"
+        android:onClick="selectEndTime"/>
 
 </RelativeLayout>

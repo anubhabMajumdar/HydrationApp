@@ -72,6 +72,9 @@ public class HydrationSettingActivity extends AppCompatActivity {
 
         t = (TextView) findViewById(R.id.start_of_day);
         this.setDefaultTime(startTime);
+
+        t = (TextView) findViewById(R.id.end_of_day);
+        this.setDefaultTime(startTime);
     }
 
     /* --------------------------------------------------- Actual Work ----------------------------------------- */
@@ -80,6 +83,12 @@ public class HydrationSettingActivity extends AppCompatActivity {
     public void selectStartTime(View v)
     {
         t = (TextView) findViewById(R.id.start_of_day);
+        this.showTimePickerDialog(v);
+    }
+
+    public void selectEndTime(View v)
+    {
+        t = (TextView) findViewById(R.id.end_of_day);
         this.showTimePickerDialog(v);
     }
 
