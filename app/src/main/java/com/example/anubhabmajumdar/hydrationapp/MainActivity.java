@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    int start_hour, start_min, end_hour, end_min, notification_interval;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,10 +30,29 @@ public class MainActivity extends AppCompatActivity {
     public void showToast(String text)
     {
         Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
+        int duration = Toast.LENGTH_LONG;
 
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
+    }
+
+    public void extractSettingsData(Intent data)
+    {
+        this.start_hour = Integer.parseInt(data.getStringExtra("start_hour"));
+        this.start_min = Integer.parseInt(data.getStringExtra("start_min"));
+        this.end_hour = Integer.parseInt(data.getStringExtra("end_hour"));
+        this.end_min = Integer.parseInt(data.getStringExtra("end_min"));
+        this.notification_interval = Integer.parseInt(data.getStringExtra("notification_interval"));
+    }
+
+    public boolean verifySettingsData()
+    {
+        boolean flag = true;
+
+        if (start_hour == -1 || start_min == -1 || end_hour == -1 || end_min == -1 || notification_interval == -1)
+            flag = false;
+
+        return flag;
     }
 
     /* --------------------------------------------------- Actual functions ----------------------------------------- */
@@ -48,8 +69,9 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 1) {
             if(resultCode == RESULT_OK){
 
-                this.showToast(data.getStringExtra("notification_interval"));
-
+                this.extractSettingsData(data);
+                if (this.verifySettingsData() == false)
+                    this.showToast("Oops! Something went wrong with settings");
             }
         }
     }
