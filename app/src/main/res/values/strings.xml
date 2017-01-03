@@ -5,4 +5,6 @@
     <string name="hydration_setting_start_time">Start of the day</string>
     <string name="hydration_setting_end_time">End of the day</string>
     <string name="hydration_setting_notification_interval">Notification Interval</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -11,81 +11,27 @@
     tools:context="com.example.anubhabmajumdar.hydrationapp.HydrationSettingActivity">
 
     <TextView
-        android:text="@string/hydration_setting_time"
+        android:text="Start of day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginLeft="17dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginTop="16dp"
-        android:id="@+id/hydration_setting_time_interval"
+        android:id="@+id/textView8"
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
     <TextView
-        android:text="@string/hydration_setting_start_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/hydration_setting_time_interval"
-        android:layout_alignLeft="@+id/hydration_setting_time_interval"
-        android:layout_alignStart="@+id/hydration_setting_time_interval"
-        android:layout_marginLeft="7dp"
-        android:layout_marginStart="7dp"
-        android:layout_marginTop="15dp"
-        android:id="@+id/hydration_setting_day_start" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="time"
-        android:ems="10"
-        android:layout_below="@+id/hydration_setting_day_start"
-        android:layout_alignLeft="@+id/hydration_setting_day_start"
-        android:layout_alignStart="@+id/hydration_setting_day_start"
-        android:layout_marginTop="14dp"
-        android:id="@+id/day_start" />
-
-    <TextView
-        android:text="@string/hydration_setting_end_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:id="@+id/hydration_setting_day_end"
-        android:layout_below="@+id/day_start"
-        android:layout_alignLeft="@+id/day_start"
-        android:layout_alignStart="@+id/day_start" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="time"
-        android:ems="10"
-        android:layout_marginTop="11dp"
-        android:id="@+id/day_end"
-        android:layout_below="@+id/hydration_setting_day_end"
-        android:layout_alignLeft="@+id/hydration_setting_day_end"
-        android:layout_alignStart="@+id/hydration_setting_day_end" />
-
-    <TextView
-        android:text="@string/hydration_setting_notification_interval"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/hydration_setting_notification_interval"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/hydration_setting_time_interval"
-        android:layout_alignStart="@+id/hydration_setting_time_interval" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:layout_marginTop="17dp"
-        android:id="@+id/notification_interval"
-        android:layout_below="@+id/hydration_setting_notification_interval"
-        android:layout_alignLeft="@+id/day_end"
-        android:layout_alignStart="@+id/day_end" />
+        android:layout_below="@+id/textView8"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="13dp"
+        android:onClick="selectStartTime"
+        android:id="@+id/start_of_day"
+        android:text="Select time"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
 </RelativeLayout>
