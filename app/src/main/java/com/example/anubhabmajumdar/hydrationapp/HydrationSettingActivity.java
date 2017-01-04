@@ -5,11 +5,14 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -22,6 +25,7 @@ public class HydrationSettingActivity extends AppCompatActivity {
     TextView t;
 
     int start_hour, start_min, end_hour, end_min, notification_interval;
+    double quantity;
 
     public HydrationSettingActivity() {
         this.start_hour = -1;
@@ -29,6 +33,7 @@ public class HydrationSettingActivity extends AppCompatActivity {
         this.end_hour = -1;
         this.end_min = -1;
         this.notification_interval = -1;
+        this.quantity = 2.0;
     }
 
     /* --------------------------------------------------- Helper functions ----------------------------------------- */
@@ -111,6 +116,26 @@ public class HydrationSettingActivity extends AppCompatActivity {
         // set OnItemSelectedListener
         spinner.setOnItemSelectedListener(new SpinnerActivity());
 
+        final EditText quant = (EditText) findViewById(R.id.quantity);
+        quant.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s)
+            {
+                if (s.length()>0)
+                {
+                    quantity = Double.parseDouble(quant.getText().toString());
+                }
+
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+                quantity = 2.0;
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+
 
         t = (TextView) findViewById(R.id.start_of_day);
         this.setDefaultTime();
@@ -127,6 +152,7 @@ public class HydrationSettingActivity extends AppCompatActivity {
         intent.putExtra("end_hour", Integer.toString(end_hour));
         intent.putExtra("end_min", Integer.toString(end_min));
         intent.putExtra("notification_interval", Integer.toString(notification_interval));
+        intent.putExtra("quantity", Double.toString(quantity));
         return intent;
     }
 

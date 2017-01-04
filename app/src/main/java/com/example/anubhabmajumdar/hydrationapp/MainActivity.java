@@ -11,6 +11,8 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     int start_hour, start_min, end_hour, end_min, notification_interval;
+    double quantity;
+    String state = "initial";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +45,14 @@ public class MainActivity extends AppCompatActivity {
         this.end_hour = Integer.parseInt(data.getStringExtra("end_hour"));
         this.end_min = Integer.parseInt(data.getStringExtra("end_min"));
         this.notification_interval = Integer.parseInt(data.getStringExtra("notification_interval"));
+        this.quantity = (Math.round(Double.parseDouble(data.getStringExtra("quantity"))*10.0))/10.0;
     }
 
     public boolean verifySettingsData()
     {
         boolean flag = true;
 
-        if (start_hour == -1 || start_min == -1 || end_hour == -1 || end_min == -1 || notification_interval == -1)
+        if (start_hour == -1 || start_min == -1 || end_hour == -1 || end_min == -1 || notification_interval == -1 || quantity == -1)
             flag = false;
 
         return flag;
@@ -66,12 +69,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if(resultCode == RESULT_OK){
+        if (requestCode == 1)
+        {
+            if(resultCode == RESULT_OK)
+            {
 
                 this.extractSettingsData(data);
-                if (this.verifySettingsData() == false)
+                if (!this.verifySettingsData())
                     this.showToast("Oops! Something went wrong with settings");
+
             }
         }
     }
