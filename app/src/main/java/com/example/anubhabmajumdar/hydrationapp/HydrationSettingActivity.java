@@ -2,7 +2,9 @@ package com.example.anubhabmajumdar.hydrationapp;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -146,14 +148,30 @@ public class HydrationSettingActivity extends AppCompatActivity {
 
     public Intent setIntentToSend()
     {
-        Intent intent = new Intent();
-        intent.putExtra("start_hour", Integer.toString(start_hour));
-        intent.putExtra("start_min", Integer.toString(start_min));
-        intent.putExtra("end_hour", Integer.toString(end_hour));
-        intent.putExtra("end_min", Integer.toString(end_min));
-        intent.putExtra("notification_interval", Integer.toString(notification_interval));
-        intent.putExtra("quantity", Double.toString(quantity));
+        Intent intent = new Intent(this, HydrationTrackerActivity.class);
+//        intent.putExtra("start_hour", Integer.toString(start_hour));
+//        intent.putExtra("start_min", Integer.toString(start_min));
+//        intent.putExtra("end_hour", Integer.toString(end_hour));
+//        intent.putExtra("end_min", Integer.toString(end_min));
+//        intent.putExtra("notification_interval", Integer.toString(notification_interval));
+//        intent.putExtra("quantity", Double.toString(quantity));
         return intent;
+    }
+
+    public void saveSettings()
+    {
+        SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putString(getString(R.string.state_key), getString(R.string.state_ready));
+        editor.putInt(getString(R.string.start_hour), start_hour);
+        editor.putInt(getString(R.string.start_min), start_min);
+        editor.putInt(getString(R.string.end_hour), end_hour);
+        editor.putInt(getString(R.string.end_min), end_min);
+        editor.putInt(getString(R.string.notification_interval), notification_interval);
+        editor.putString(getString(R.string.quantity), Double.toString(quantity));
+
+        editor.apply();
     }
 
     /* --------------------------------------------------- onCreate ----------------------------------------- */
@@ -169,8 +187,10 @@ public class HydrationSettingActivity extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
 
+
+        this.saveSettings();
         Intent intent = this.setIntentToSend();
-        setResult(RESULT_OK, intent);
+        startActivity(intent);
         finish();
         return true;
     }
@@ -197,11 +217,13 @@ public class HydrationSettingActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        this.saveSettings();
         Intent intent = this.setIntentToSend();
-
-        setResult(RESULT_OK, intent);
+        startActivity(intent);
         finish();
     }
+
+
     /* --------------------------------------------------- Inner Class ------------------------------------------- */
 
     public class SpinnerActivity extends Activity implements OnItemSelectedListener {
