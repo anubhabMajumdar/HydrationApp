@@ -41,7 +41,7 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         else
         {
             setContentView(R.layout.activity_hydration_tracker);
-            this.showToast("set");
+            //this.showToast("set");
         }
 
     }

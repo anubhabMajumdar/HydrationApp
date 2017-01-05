@@ -19,7 +19,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.Calendar;
-import java.util.Locale;
 
 public class HydrationSettingActivity extends AppCompatActivity {
 
@@ -28,7 +27,6 @@ public class HydrationSettingActivity extends AppCompatActivity {
 
     int start_hour, start_min, end_hour, end_min, notification_interval;
     double quantity;
-
     public HydrationSettingActivity() {
         this.start_hour = -1;
         this.start_min = -1;
@@ -89,9 +87,22 @@ public class HydrationSettingActivity extends AppCompatActivity {
 
     public void setDefaultTime()
     {
-        Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
+        SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
+
+        // Use the current time as the default values for the picker
+        final Calendar c = Calendar.getInstance();
+        int hour, minute;
+        if(t==(findViewById(R.id.start_of_day)))
+        {
+            hour = sharedPref.getInt(getString(R.string.start_hour), c.get(Calendar.HOUR_OF_DAY));
+            minute = sharedPref.getInt(getString(R.string.start_min), c.get(Calendar.MINUTE));
+
+        }
+        else
+        {
+            hour = sharedPref.getInt(getString(R.string.end_hour), c.get(Calendar.HOUR_OF_DAY));
+            minute = sharedPref.getInt(getString(R.string.end_min), c.get(Calendar.MINUTE));
+        }
 
         this.setTime(hour, minute);
     }
@@ -107,6 +118,9 @@ public class HydrationSettingActivity extends AppCompatActivity {
     {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);  // add back button
 
+        SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
+
+
         Spinner spinner = (Spinner) findViewById(R.id.notification_interval);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -117,8 +131,15 @@ public class HydrationSettingActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
         // set OnItemSelectedListener
         spinner.setOnItemSelectedListener(new SpinnerActivity());
+        int spinnerVal = sharedPref.getInt(getString(R.string.notification_interval), 15);
+        int spinnerPosition = adapter.getPosition(Integer.toString(spinnerVal));
+        spinner.setSelection(spinnerPosition);
+
 
         final EditText quant = (EditText) findViewById(R.id.quantity);
+        final String saved_quantity = sharedPref.getString(getString(R.string.quantity), "2.5");
+        quant.setText(saved_quantity);
+
         quant.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s)
@@ -132,7 +153,7 @@ public class HydrationSettingActivity extends AppCompatActivity {
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after)
             {
-                quantity = 2.0;
+                quantity = Double.parseDouble(saved_quantity);
             }
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
@@ -168,6 +189,15 @@ public class HydrationSettingActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    public void setTimePickerState(String state)
+    {
+        SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putString(getString(R.string.timepicker_state), state);
+        editor.apply();
+
+    }
     /* --------------------------------------------------- onCreate ----------------------------------------- */
 
     @Override
@@ -181,7 +211,6 @@ public class HydrationSettingActivity extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
 
-
         this.saveSettings();
         Intent intent = this.setIntentToSend();
         startActivity(intent);
@@ -194,6 +223,7 @@ public class HydrationSettingActivity extends AppCompatActivity {
     public void selectStartTime(View v)
     {
         t = (TextView) findViewById(R.id.start_of_day);
+        this.setTimePickerState(getString(R.string.timepicker_start));
         this.showTimePickerDialog(v);
 
 
@@ -202,6 +232,7 @@ public class HydrationSettingActivity extends AppCompatActivity {
     public void selectEndTime(View v)
     {
         t = (TextView) findViewById(R.id.end_of_day);
+        this.setTimePickerState(getString(R.string.timepicker_end));
         this.showTimePickerDialog(v);
 
 

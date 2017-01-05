@@ -1,10 +1,16 @@
 <resources>
     <string name="app_name">HydrationApp</string>
     <string name="first_time">Tell me about your hydration plan!</string>
+
     <string name="state_key">state</string>
     <string name="state_default">initial</string>
     <string name="state_ready">ready</string>
     <string name="state_set">set</string>
+
+    <string name="timepicker_state">timepicker_state</string>
+    <string name="timepicker_start">start</string>
+    <string name="timepicker_end">end</string>
+
     <string name="start_hour">start_hour</string>
     <string name="start_min">start_min</string>
     <string name="end_hour">end_hour</string>
