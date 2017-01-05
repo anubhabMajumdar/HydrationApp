@@ -149,12 +149,6 @@ public class HydrationSettingActivity extends AppCompatActivity {
     public Intent setIntentToSend()
     {
         Intent intent = new Intent(this, HydrationTrackerActivity.class);
-//        intent.putExtra("start_hour", Integer.toString(start_hour));
-//        intent.putExtra("start_min", Integer.toString(start_min));
-//        intent.putExtra("end_hour", Integer.toString(end_hour));
-//        intent.putExtra("end_min", Integer.toString(end_min));
-//        intent.putExtra("notification_interval", Integer.toString(notification_interval));
-//        intent.putExtra("quantity", Double.toString(quantity));
         return intent;
     }
 

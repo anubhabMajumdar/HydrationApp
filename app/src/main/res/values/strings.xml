@@ -4,6 +4,7 @@
     <string name="state_key">state</string>
     <string name="state_default">initial</string>
     <string name="state_ready">ready</string>
+    <string name="state_set">set</string>
     <string name="start_hour">start_hour</string>
     <string name="start_min">start_min</string>
     <string name="end_hour">end_hour</string>
@@ -13,6 +14,7 @@
 
 
     <string-array name="notification_interval_array">
+        <item>1</item>
         <item>15</item>
         <item>20</item>
         <item>30</item>

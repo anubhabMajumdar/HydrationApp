@@ -1,19 +1,17 @@
 package com.example.anubhabmajumdar.hydrationapp;
 
-import android.app.NotificationManager;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import java.util.Calendar;
 
 public class HydrationTrackerActivity extends AppCompatActivity {
 
@@ -39,7 +37,11 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         {
             setContentView(R.layout.activity_hydration_tracker);
             this.handleSettings();
-            this.sendNotification();
+        }
+        else
+        {
+            setContentView(R.layout.activity_hydration_tracker);
+            this.showToast("set");
         }
 
     }
@@ -92,7 +94,16 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         if (!this.verifySettingsData())
             this.showToast("Oops! Something went wrong with settings");
         else
-            this.showToast(Double.toString(quantity));
+        {
+            this.handleNotification();
+
+            SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+
+            editor.putString(getString(R.string.state_key), getString(R.string.state_set));
+            editor.apply();
+        }
+
     }
 
     /* --------------------------------------------------- Actual functions ----------------------------------------- */
@@ -104,39 +115,34 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void sendNotification()
+    public void handleNotification()
     {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.water_glass)
-                        .setContentTitle("Drink water")
-                        .setContentText("It's time to have a glass of water!");
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, HydrationTrackerActivity.class);
+        this.startNotification();
+        this.stopNotification();
+    }
 
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-        // your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(HydrationTrackerActivity.class);
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
+    public void startNotification()
+    {
+        Intent myIntent = new Intent(this , NotificationService.class);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, start_hour);
+        calendar.set(Calendar.MINUTE, start_min);
+        calendar.set(Calendar.SECOND, 00);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), notification_interval*60*1000 , pendingIntent);  //set repeating every 24 hours
+    }
 
-        mBuilder.setContentIntent(resultPendingIntent);
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        mBuilder.setSound(alarmSound);
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        // mId allows you to update the notification later on.
-        mNotificationManager.notify(mId, mBuilder.build());
+    public void stopNotification()
+    {
+        Intent myIntent = new Intent(this , StopNotificationService.class);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, end_hour);
+        calendar.set(Calendar.MINUTE, end_min);
+        calendar.set(Calendar.SECOND, 00);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 
 }
