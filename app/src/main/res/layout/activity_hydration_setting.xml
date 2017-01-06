@@ -127,5 +127,37 @@
         android:layout_alignRight="@+id/textView14"
         android:layout_alignEnd="@+id/textView14" />
 
+    <TextView
+        android:text="Glass size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/quantity"
+        android:layout_alignLeft="@+id/quantity"
+        android:layout_alignStart="@+id/quantity"
+        android:layout_marginTop="11dp"
+        android:id="@+id/textView3"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_alignStart="@+id/textView3"
+        android:layout_marginTop="12dp"
+        android:id="@+id/glass_size"
+        android:layout_toStartOf="@+id/textView4"
+        android:layout_toLeftOf="@+id/textView4" />
+
+    <TextView
+        android:text="ml"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:id="@+id/textView4"
+        android:layout_alignBottom="@+id/glass_size"
+        android:layout_toRightOf="@+id/textView5"
+        android:layout_toEndOf="@+id/textView5" />
+
 
 </RelativeLayout>

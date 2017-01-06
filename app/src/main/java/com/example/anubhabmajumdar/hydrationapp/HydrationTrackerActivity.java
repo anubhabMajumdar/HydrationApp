@@ -15,7 +15,7 @@ import java.util.Calendar;
 
 public class HydrationTrackerActivity extends AppCompatActivity {
 
-    int start_hour, start_min, end_hour, end_min, notification_interval;
+    int start_hour, start_min, end_hour, end_min, notification_interval, glass_size;
     double quantity;
     int mId = 1;
 
@@ -75,6 +75,7 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         this.end_min = sharedPref.getInt(getString(R.string.end_min), -1);
         this.notification_interval = sharedPref.getInt(getString(R.string.notification_interval), -1);
         this.quantity = (Math.round(Double.parseDouble(sharedPref.getString(getString(R.string.quantity), "2.0"))*10.0))/10.0;
+        this.glass_size = sharedPref.getInt(getString(R.string.notification_interval), -1);
     }
 
     public boolean verifySettingsData()

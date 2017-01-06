@@ -25,7 +25,7 @@ public class HydrationSettingActivity extends AppCompatActivity {
     int cur_hour, cur_min;
     TextView t;
 
-    int start_hour, start_min, end_hour, end_min, notification_interval;
+    int start_hour, start_min, end_hour, end_min, notification_interval, glass_size;
     double quantity;
     public HydrationSettingActivity() {
         this.start_hour = -1;
@@ -34,6 +34,7 @@ public class HydrationSettingActivity extends AppCompatActivity {
         this.end_min = -1;
         this.notification_interval = -1;
         this.quantity = 2.0;
+        this.glass_size = 150;
     }
 
     /* --------------------------------------------------- Helper functions ----------------------------------------- */
@@ -135,6 +136,19 @@ public class HydrationSettingActivity extends AppCompatActivity {
         int spinnerPosition = adapter.getPosition(Integer.toString(spinnerVal));
         spinner.setSelection(spinnerPosition);
 
+        Spinner spinner_glass_size = (Spinner) findViewById(R.id.glass_size);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter_glass_size = ArrayAdapter.createFromResource(this,
+                R.array.glass_size_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter_glass_size.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner_glass_size.setAdapter(adapter_glass_size);
+        // set OnItemSelectedListener
+        spinner_glass_size.setOnItemSelectedListener(new SpinnerActivity());
+        spinnerVal = sharedPref.getInt(getString(R.string.glass_size), 150);
+        spinnerPosition = adapter_glass_size.getPosition(Integer.toString(spinnerVal));
+        spinner_glass_size.setSelection(spinnerPosition);
 
         final EditText quant = (EditText) findViewById(R.id.quantity);
         final String saved_quantity = sharedPref.getString(getString(R.string.quantity), "2.5");
@@ -185,6 +199,7 @@ public class HydrationSettingActivity extends AppCompatActivity {
         editor.putInt(getString(R.string.end_min), end_min);
         editor.putInt(getString(R.string.notification_interval), notification_interval);
         editor.putString(getString(R.string.quantity), Double.toString(quantity));
+        editor.putInt(getString(R.string.glass_size), glass_size);
 
         editor.apply();
     }
@@ -256,12 +271,20 @@ public class HydrationSettingActivity extends AppCompatActivity {
         public void onItemSelected(AdapterView<?> parent, View view,
                                    int pos, long id) {
             // An item was selected. You can retrieve the selected item using
-            notification_interval =  Integer.parseInt(parent.getItemAtPosition(pos).toString());
+            if (parent.getId()==R.id.glass_size)
+                glass_size = Integer.parseInt(parent.getItemAtPosition(pos).toString());
+            else
+                notification_interval =  Integer.parseInt(parent.getItemAtPosition(pos).toString());
 
-         }
+
+        }
 
         public void onNothingSelected(AdapterView<?> parent) {
-            notification_interval = Integer.parseInt(parent.getItemAtPosition(0).toString());
+            if (parent.getId()==R.id.glass_size)
+                glass_size = Integer.parseInt(parent.getItemAtPosition(0).toString());
+            else
+                notification_interval = Integer.parseInt(parent.getItemAtPosition(0).toString());
+
 
         }
     }

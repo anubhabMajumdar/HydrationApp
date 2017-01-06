@@ -17,7 +17,7 @@
     <string name="end_min">end_min</string>
     <string name="notification_interval">notification_interval</string>
     <string name="quantity">quantity</string>
-
+    <string name="glass_size">glass_size</string>
 
     <string-array name="notification_interval_array">
         <item>1</item>
@@ -26,5 +26,13 @@
         <item>30</item>
         <item>40</item>
         <item>60</item>
+    </string-array>
+
+    <string-array name="glass_size_array">
+        <item>150</item>
+        <item>200</item>
+        <item>300</item>
+        <item>400</item>
+        <item>500</item>
     </string-array>
 </resources>
