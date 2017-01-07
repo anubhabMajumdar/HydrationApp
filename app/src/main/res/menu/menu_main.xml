@@ -3,17 +3,26 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_user"
+        android:title="Revert"
         android:orderInCategory="301"
-        android:title="User"
-        android:icon="@drawable/water_glass"
+        app:showAsAction="always"
+        android:icon="@drawable/undo"
+        android:onClick="mistakeWaterConsumption"
+        android:visible="true" />
+
+    <item
+        android:id="@+id/action_user"
+        android:orderInCategory="302"
+        android:title="Settings"
+        android:icon="@drawable/settings"
         android:onClick="openHydrationSetting"
-        app:showAsAction="always"></item>
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="Blank"
-        app:showAsAction="never" />
+        android:title="Silent notifiction"
+        app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_lock_silent_mode" />
 
 </menu>

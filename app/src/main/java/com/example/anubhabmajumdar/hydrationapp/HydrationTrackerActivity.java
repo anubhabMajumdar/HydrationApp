@@ -289,4 +289,19 @@ public class HydrationTrackerActivity extends AppCompatActivity {
 
         setUpPieChart();
     }
+
+    public void mistakeWaterConsumption(MenuItem item)
+    {
+        totalWaterConsumption = totalWaterConsumption - glass_size;
+        totalWaterConsumption = Math.max(0, totalWaterConsumption);
+
+        SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putInt(getString(R.string.total_consumption), totalWaterConsumption);
+        editor.apply();
+
+        setUpPieChart();
+    }
+
 }
