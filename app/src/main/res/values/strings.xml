@@ -18,6 +18,8 @@
     <string name="notification_interval">notification_interval</string>
     <string name="quantity">quantity</string>
     <string name="glass_size">glass_size</string>
+    <string name="total_consumption">total_consumption</string>
+
 
     <string-array name="notification_interval_array">
         <item>1</item>

@@ -19,6 +19,7 @@
         android:tint="@android:color/white"
         app:srcCompat="@android:drawable/ic_input_add"
         android:id="@+id/floatingActionButton"
+        android:onClick="updateWaterConsumption"
         android:layout_marginRight="27dp"
         android:layout_marginEnd="27dp"
         android:layout_marginBottom="37dp"
@@ -26,5 +27,13 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         app:elevation="9dp" />
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>
 

@@ -5,17 +5,26 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class HydrationTrackerActivity extends AppCompatActivity {
 
-    int start_hour, start_min, end_hour, end_min, notification_interval, glass_size;
+    int start_hour, start_min, end_hour, end_min, notification_interval, glass_size, totalWaterConsumption;
     double quantity;
     int mId = 1;
 
@@ -32,15 +41,21 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         String state = sharedPref.getString(getString(R.string.state_key), state_default);
 
         if (state.equals(state_default))
+        {
             setContentView(R.layout.activity_main);
+            //showToast("default");
+        }
         else if (state.equals(state_ready))
         {
             setContentView(R.layout.activity_hydration_tracker);
             this.handleSettings();
+            //showToast("ready");
         }
         else
         {
             setContentView(R.layout.activity_hydration_tracker);
+            this.extractSettingsData();
+            setUpPieChart();
             //this.showToast("set");
         }
 
@@ -76,6 +91,7 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         this.notification_interval = sharedPref.getInt(getString(R.string.notification_interval), -1);
         this.quantity = (Math.round(Double.parseDouble(sharedPref.getString(getString(R.string.quantity), "2.0"))*10.0))/10.0;
         this.glass_size = sharedPref.getInt(getString(R.string.notification_interval), -1);
+        this.totalWaterConsumption = sharedPref.getInt(getString(R.string.total_consumption), 0);
     }
 
     public boolean verifySettingsData()
@@ -97,6 +113,7 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         else
         {
             this.handleNotification();
+            this.setUpPieChart();
 
             SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
@@ -146,4 +163,41 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 
+    public void setUpPieChart()
+    {
+        PieChart pieChart = (PieChart) findViewById(R.id.chart);
+        pieChart.getDescription().setEnabled(false);
+        pieChart.getLegend().setEnabled(false);
+        pieChart.setTransparentCircleColor(Color.WHITE);
+
+        List<PieEntry> entries = new ArrayList<>();
+
+        entries.add(new PieEntry(totalWaterConsumption, "Water Consumed"));
+        int remaining = Math.max (0, ((int) (quantity*1000) - totalWaterConsumption));
+        entries.add(new PieEntry(remaining, "Remaining"));
+
+        PieDataSet set = new PieDataSet(entries, "Election Results");
+        int color_green = getResources().getColor(R.color.darkgreen);
+        int color_blue = getResources().getColor(R.color.darkblue);
+
+        set.setColors(new int[] { color_blue, color_green });
+
+
+        PieData data = new PieData(set);
+        pieChart.setData(data);
+        pieChart.invalidate(); // refresh
+    }
+
+    public void updateWaterConsumption(View v)
+    {
+        totalWaterConsumption = totalWaterConsumption + glass_size;
+
+        SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putInt(getString(R.string.total_consumption), totalWaterConsumption);
+        editor.apply();
+
+        setUpPieChart();
+    }
 }
