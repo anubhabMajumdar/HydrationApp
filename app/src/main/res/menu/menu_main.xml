@@ -18,11 +18,6 @@
         android:onClick="openHydrationSetting"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="Silent notifiction"
-        app:showAsAction="ifRoom"
-        android:icon="@android:drawable/ic_lock_silent_mode" />
+
 
 </menu>

@@ -26,6 +26,7 @@ public class HydrationSettingActivity extends AppCompatActivity {
     TextView t;
 
     int start_hour, start_min, end_hour, end_min, notification_interval, glass_size;
+    String notification_state;
     double quantity;
     public HydrationSettingActivity() {
         this.start_hour = -1;
@@ -35,6 +36,7 @@ public class HydrationSettingActivity extends AppCompatActivity {
         this.notification_interval = -1;
         this.quantity = 2.0;
         this.glass_size = 150;
+        this.notification_state = "normal";
     }
 
     /* --------------------------------------------------- Helper functions ----------------------------------------- */
@@ -136,6 +138,7 @@ public class HydrationSettingActivity extends AppCompatActivity {
         int spinnerPosition = adapter.getPosition(Integer.toString(spinnerVal));
         spinner.setSelection(spinnerPosition);
 
+
         Spinner spinner_glass_size = (Spinner) findViewById(R.id.glass_size);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter_glass_size = ArrayAdapter.createFromResource(this,
@@ -149,6 +152,20 @@ public class HydrationSettingActivity extends AppCompatActivity {
         spinnerVal = sharedPref.getInt(getString(R.string.glass_size), 150);
         spinnerPosition = adapter_glass_size.getPosition(Integer.toString(spinnerVal));
         spinner_glass_size.setSelection(spinnerPosition);
+
+
+        Spinner notification_spinner = (Spinner) findViewById(R.id.notification);
+        ArrayAdapter<CharSequence> adapter_notification = ArrayAdapter.createFromResource(this,
+                R.array.notification_array, android.R.layout.simple_spinner_item);
+        adapter_notification.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        notification_spinner.setAdapter(adapter_notification);
+        notification_spinner.setOnItemSelectedListener(new SpinnerActivity());
+
+        String notification_state = sharedPref.getString(getString(R.string.notification_state), getString(R.string.normal_notification));
+        spinnerPosition = adapter_notification.getPosition(notification_state);
+        notification_spinner.setSelection(spinnerPosition);
+
+
 
         final EditText quant = (EditText) findViewById(R.id.quantity);
         final String saved_quantity = sharedPref.getString(getString(R.string.quantity), "2.5");
@@ -200,6 +217,7 @@ public class HydrationSettingActivity extends AppCompatActivity {
         editor.putInt(getString(R.string.notification_interval), notification_interval);
         editor.putString(getString(R.string.quantity), Double.toString(quantity));
         editor.putInt(getString(R.string.glass_size), glass_size);
+        editor.putString(getString(R.string.notification_state), notification_state);
 
         editor.apply();
     }
@@ -273,8 +291,10 @@ public class HydrationSettingActivity extends AppCompatActivity {
             // An item was selected. You can retrieve the selected item using
             if (parent.getId()==R.id.glass_size)
                 glass_size = Integer.parseInt(parent.getItemAtPosition(pos).toString());
-            else
+            else if (parent.getId()==R.id.notification_interval)
                 notification_interval =  Integer.parseInt(parent.getItemAtPosition(pos).toString());
+            else if (parent.getId()==R.id.notification)
+                notification_state =  parent.getItemAtPosition(pos).toString();
 
 
         }
@@ -282,9 +302,10 @@ public class HydrationSettingActivity extends AppCompatActivity {
         public void onNothingSelected(AdapterView<?> parent) {
             if (parent.getId()==R.id.glass_size)
                 glass_size = Integer.parseInt(parent.getItemAtPosition(0).toString());
-            else
+            else if (parent.getId()==R.id.notification_interval)
                 notification_interval = Integer.parseInt(parent.getItemAtPosition(0).toString());
-
+            else if (parent.getId()==R.id.notification)
+                notification_state = parent.getItemAtPosition(0).toString();
 
         }
     }

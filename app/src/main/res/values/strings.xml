@@ -14,6 +14,12 @@
     <string name="timepicker_start">start</string>
     <string name="timepicker_end">end</string>
 
+    <string name="notification_state">notification_state</string>
+    <string name="normal_notification">Notification with sound</string>
+    <string name="silent_notification">Silent notification</string>
+    <string name="no_notification">No notification</string>
+
+
     <string name="start_hour">start_hour</string>
     <string name="start_min">start_min</string>
     <string name="end_hour">end_hour</string>
@@ -41,4 +47,17 @@
         <item>400</item>
         <item>500</item>
     </string-array>
+
+    <string-array name="notification_array">
+        <item>@string/normal_notification</item>
+        <item>@string/silent_notification</item>
+        <item>@string/no_notification</item>
+    </string-array>
+
+    <string-array name="notification_name_array">
+        <item>normal</item>
+        <item>silent</item>
+        <item>no</item>
+    </string-array>
+
 </resources>

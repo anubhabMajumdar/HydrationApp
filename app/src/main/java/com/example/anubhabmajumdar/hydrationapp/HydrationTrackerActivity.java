@@ -31,6 +31,8 @@ public class HydrationTrackerActivity extends AppCompatActivity {
 
     int start_hour, start_min, end_hour, end_min, notification_interval, glass_size, totalWaterConsumption;
     double quantity;
+    String notification_state;
+
     int mId = 1;
 
     /* --------------------------------------------------- onCreate ------------------------------------------------- */
@@ -104,6 +106,9 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         this.quantity = (Math.round(Double.parseDouble(sharedPref.getString(getString(R.string.quantity), "2.0"))*10.0))/10.0;
         this.glass_size = sharedPref.getInt(getString(R.string.glass_size), -1);
         this.totalWaterConsumption = sharedPref.getInt(getString(R.string.total_consumption), 0);
+        this.notification_state = sharedPref.getString(getString(R.string.notification_state), getString(R.string.normal_notification));
+
+        //showToast(notification_state);
     }
 
     public boolean verifySettingsData()
