@@ -7,6 +7,8 @@
     <string name="state_ready">ready</string>
     <string name="state_set">set</string>
 
+    <string name="appReset">reset</string>
+
     <string name="timepicker_state">timepicker_state</string>
     <string name="timepicker_start">start</string>
     <string name="timepicker_end">end</string>
@@ -31,6 +33,7 @@
     </string-array>
 
     <string-array name="glass_size_array">
+        <item>100</item>
         <item>150</item>
         <item>200</item>
         <item>300</item>

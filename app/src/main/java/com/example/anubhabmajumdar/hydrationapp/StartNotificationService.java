@@ -17,13 +17,13 @@ import android.support.v4.app.NotificationCompat;
  * TODO: Customize class - update intent actions, extra parameters and static
  * helper methods.
  */
-public class NotificationService extends IntentService
+public class StartNotificationService extends IntentService
 {
 
     int mId = 1;
 
-    public NotificationService() {
-        super("NotificationService");
+    public StartNotificationService() {
+        super("StartNotificationService");
     }
 
 

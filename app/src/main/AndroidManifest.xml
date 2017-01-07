@@ -25,10 +25,13 @@
         </activity>
 
         <service
-            android:name=".NotificationService"
+            android:name=".StartNotificationService"
             android:exported="false" />
         <service
             android:name=".StopNotificationService"
+            android:exported="false" />
+        <service
+            android:name=".ResetAppService"
             android:exported="false"></service>
     </application>
 

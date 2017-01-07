@@ -2,11 +2,15 @@ package com.example.anubhabmajumdar.hydrationapp;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,10 +38,13 @@ public class HydrationTrackerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(resetApp,
+                new IntentFilter(getString(R.string.appReset)));
 
         SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
         String state_default = getResources().getString(R.string.state_default);
         String state_ready = getResources().getString(R.string.state_ready);
+        String state_set = getResources().getString(R.string.state_set);
         String state = sharedPref.getString(getString(R.string.state_key), state_default);
 
         if (state.equals(state_default))
@@ -51,13 +58,14 @@ public class HydrationTrackerActivity extends AppCompatActivity {
             this.handleSettings();
             //showToast("ready");
         }
-        else
+        else if (state.equals(state_set))
         {
             setContentView(R.layout.activity_hydration_tracker);
             this.extractSettingsData();
-            setUpPieChart();
+            this.setUpPieChart();
             //this.showToast("set");
         }
+
 
     }
 
@@ -90,7 +98,7 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         this.end_min = sharedPref.getInt(getString(R.string.end_min), -1);
         this.notification_interval = sharedPref.getInt(getString(R.string.notification_interval), -1);
         this.quantity = (Math.round(Double.parseDouble(sharedPref.getString(getString(R.string.quantity), "2.0"))*10.0))/10.0;
-        this.glass_size = sharedPref.getInt(getString(R.string.notification_interval), -1);
+        this.glass_size = sharedPref.getInt(getString(R.string.glass_size), -1);
         this.totalWaterConsumption = sharedPref.getInt(getString(R.string.total_consumption), 0);
     }
 
@@ -105,6 +113,22 @@ public class HydrationTrackerActivity extends AppCompatActivity {
     }
 
 
+
+
+    /* --------------------------------------------------- Actual functions ----------------------------------------- */
+
+    private BroadcastReceiver resetApp = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //showToast("reset message received");
+
+            extractSettingsData();
+            handleNotification();
+            setUpPieChart();
+        }
+    };
+
+
     public void handleSettings()
     {
         this.extractSettingsData();
@@ -114,6 +138,7 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         {
             this.handleNotification();
             this.setUpPieChart();
+            this.setResetApp();
 
             SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
@@ -123,9 +148,6 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         }
 
     }
-
-    /* --------------------------------------------------- Actual functions ----------------------------------------- */
-
 
     public void openHydrationSetting(MenuItem item)
     {
@@ -141,51 +163,76 @@ public class HydrationTrackerActivity extends AppCompatActivity {
 
     public void startNotification()
     {
-        Intent myIntent = new Intent(this , NotificationService.class);
+        Intent intent = new Intent(this , StartNotificationService.class);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, start_hour);
         calendar.set(Calendar.MINUTE, start_min);
         calendar.set(Calendar.SECOND, 00);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), notification_interval*60*1000 , pendingIntent);  //set repeating every 24 hours
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), notification_interval*60*1000 , pendingIntent);  //set repeating every 24 hours
+        }
+        else
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), notification_interval*60*1000 , pendingIntent);  //set repeating every 24 hours
+
     }
 
     public void stopNotification()
     {
-        Intent myIntent = new Intent(this , StopNotificationService.class);
+        Intent intent = new Intent(this , StopNotificationService.class);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, end_hour);
         calendar.set(Calendar.MINUTE, end_min);
         calendar.set(Calendar.SECOND, 00);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        else
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
+
+    public void setResetApp()
+    {
+        Intent intent = new Intent(this , ResetAppService.class);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, end_hour);
+        calendar.set(Calendar.MINUTE, end_min+1);
+        calendar.set(Calendar.SECOND, 00);
+
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY ,pendingIntent);
     }
 
     public void setUpPieChart()
     {
         PieChart pieChart = (PieChart) findViewById(R.id.chart);
-        pieChart.getDescription().setEnabled(false);
-        pieChart.getLegend().setEnabled(false);
-        pieChart.setTransparentCircleColor(Color.WHITE);
+        if (pieChart != null)
+        {
+            pieChart.getDescription().setEnabled(false);
+            pieChart.getLegend().setEnabled(false);
+            pieChart.setTransparentCircleColor(Color.WHITE);
 
-        List<PieEntry> entries = new ArrayList<>();
+            List<PieEntry> entries = new ArrayList<>();
 
-        entries.add(new PieEntry(totalWaterConsumption, "Water Consumed"));
-        int remaining = Math.max (0, ((int) (quantity*1000) - totalWaterConsumption));
-        entries.add(new PieEntry(remaining, "Remaining"));
+            entries.add(new PieEntry(totalWaterConsumption, "Water Consumed"));
+            int remaining = Math.max(0, ((int) (quantity * 1000) - totalWaterConsumption));
+            entries.add(new PieEntry(remaining, "Remaining"));
 
-        PieDataSet set = new PieDataSet(entries, "Election Results");
-        int color_green = getResources().getColor(R.color.darkgreen);
-        int color_blue = getResources().getColor(R.color.darkblue);
+            PieDataSet set = new PieDataSet(entries, "Election Results");
+            int color_green = getResources().getColor(R.color.darkgreen);
+            int color_blue = getResources().getColor(R.color.darkblue);
 
-        set.setColors(new int[] { color_blue, color_green });
+            set.setColors(new int[]{color_blue, color_green});
 
 
-        PieData data = new PieData(set);
-        pieChart.setData(data);
-        pieChart.invalidate(); // refresh
+            PieData data = new PieData(set);
+            pieChart.setData(data);
+            pieChart.invalidate(); // refresh
+        }
     }
 
     public void updateWaterConsumption(View v)

@@ -24,11 +24,12 @@ public class StopNotificationService extends IntentService {
 
     public void stopNotification()
     {
-        Intent myIntent = new Intent(this , NotificationService.class);
+        Intent myIntent = new Intent(this , StartNotificationService.class);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
         alarmManager.cancel(pendingIntent);
      }
+
 
 
 }
