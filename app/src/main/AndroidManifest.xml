@@ -19,6 +19,7 @@
         <activity android:name=".HydrationTrackerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -31,7 +32,11 @@
             android:exported="false" />
         <service
             android:name=".ResetAppService"
+            android:exported="false" />
+        <service
+            android:name=".NotificationDrinkWaterService"
             android:exported="false"></service>
     </application>
+
 
 </manifest>

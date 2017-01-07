@@ -47,6 +47,9 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(setNextNotification,
                 new IntentFilter(getString(R.string.setNextNotification)));
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(bigtext_updatePiechart,
+                new IntentFilter(getString(R.string.bigText_updatePiechart)));
+
         SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
         String state_default = getResources().getString(R.string.state_default);
         String state_ready = getResources().getString(R.string.state_ready);
@@ -143,6 +146,16 @@ public class HydrationTrackerActivity extends AppCompatActivity {
             setNotification();
         }
     };
+
+    private BroadcastReceiver bigtext_updatePiechart = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            extractSettingsData();
+            setUpPieChart();
+            //showToast(Integer.toString(totalWaterConsumption));
+        }
+    };
+
 
     public void setNotification()
     {

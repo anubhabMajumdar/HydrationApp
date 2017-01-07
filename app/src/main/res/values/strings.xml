@@ -10,6 +10,10 @@
     <string name="appReset">reset</string>
     <string name="setNextNotification">next_notification</string>
 
+    <string name="bigText_glass">Drink!</string>
+    <string name="drink_water">NotificationDrinkWaterService</string>
+    <string name="bigText_updatePiechart">updatePiechart</string>
+
     <string name="timepicker_state">timepicker_state</string>
     <string name="timepicker_start">start</string>
     <string name="timepicker_end">end</string>
