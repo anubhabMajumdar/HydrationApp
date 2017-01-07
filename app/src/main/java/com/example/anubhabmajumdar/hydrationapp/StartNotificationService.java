@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -33,6 +34,9 @@ public class StartNotificationService extends IntentService
         if (intent != null)
         {
             this.sendNotification();
+
+            Intent intentNotification = new Intent(getString(R.string.setNextNotification));
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intentNotification);
         }
     }
 

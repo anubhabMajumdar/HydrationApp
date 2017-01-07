@@ -8,6 +8,7 @@
     <string name="state_set">set</string>
 
     <string name="appReset">reset</string>
+    <string name="setNextNotification">next_notification</string>
 
     <string name="timepicker_state">timepicker_state</string>
     <string name="timepicker_start">start</string>

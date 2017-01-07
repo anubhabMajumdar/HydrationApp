@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -40,6 +41,9 @@ public class HydrationTrackerActivity extends AppCompatActivity {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(resetApp,
                 new IntentFilter(getString(R.string.appReset)));
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(setNextNotification,
+                new IntentFilter(getString(R.string.setNextNotification)));
 
         SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
         String state_default = getResources().getString(R.string.state_default);
@@ -128,6 +132,31 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         }
     };
 
+    private BroadcastReceiver setNextNotification = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setNotification();
+        }
+    };
+
+    public void setNotification()
+    {
+        Intent intent = new Intent(this , StartNotificationService.class);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
+        /*Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, start_hour);
+        calendar.set(Calendar.MINUTE, start_min);
+        calendar.set(Calendar.SECOND, 00);*/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    SystemClock.elapsedRealtime() + notification_interval*60*1000, pendingIntent);
+        }
+        else
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    SystemClock.elapsedRealtime() + notification_interval*60*1000, pendingIntent);
+    }
 
     public void handleSettings()
     {
@@ -163,6 +192,8 @@ public class HydrationTrackerActivity extends AppCompatActivity {
 
     public void startNotification()
     {
+        cancelNotification();
+
         Intent intent = new Intent(this , StartNotificationService.class);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
@@ -172,11 +203,19 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         calendar.set(Calendar.SECOND, 00);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), notification_interval*60*1000 , pendingIntent);  //set repeating every 24 hours
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         }
         else
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), notification_interval*60*1000 , pendingIntent);  //set repeating every 24 hours
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
+    }
+
+    public void cancelNotification()
+    {
+        Intent myIntent = new Intent(this , StartNotificationService.class);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
+        alarmManager.cancel(pendingIntent);
     }
 
     public void stopNotification()
@@ -189,7 +228,7 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, end_min);
         calendar.set(Calendar.SECOND, 00);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         else
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
@@ -204,7 +243,10 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, end_min+1);
         calendar.set(Calendar.SECOND, 00);
 
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY ,pendingIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        else
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 
     public void setUpPieChart()
