@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.example.anubhabmajumdar.hydrationapp.R.id.chart;
+
 public class HydrationTrackerActivity extends AppCompatActivity {
 
     int start_hour, start_min, end_hour, end_min, notification_interval, glass_size, totalWaterConsumption;
@@ -285,7 +287,7 @@ public class HydrationTrackerActivity extends AppCompatActivity {
 
     public void setUpPieChart()
     {
-        PieChart pieChart = (PieChart) findViewById(R.id.chart);
+        PieChart pieChart = (PieChart) findViewById(chart);
         if (pieChart != null)
         {
             pieChart.getDescription().setEnabled(false);
@@ -305,10 +307,11 @@ public class HydrationTrackerActivity extends AppCompatActivity {
             int color_blue = getResources().getColor(R.color.darkblue);
 
             set.setColors(new int[]{color_blue, color_green});
-
+            set.setValueTextSize(25);
 
             PieData data = new PieData(set);
             pieChart.setData(data);
+
             pieChart.invalidate(); // refresh
         }
     }
