@@ -147,6 +147,7 @@ public class HydrationTrackerActivity extends AppCompatActivity {
             extractSettingsData();
             handleNotification();
             setUpPieChart();
+            //setResetApp();
         }
     };
 
@@ -188,17 +189,15 @@ public class HydrationTrackerActivity extends AppCompatActivity {
 
     public void handleSettings()
     {
-        boolean startTimeChanged = startTimeChanged();
+        //boolean startTimeChanged = startTimeChanged();
+        //showToast(Boolean.toString(startTimeChanged));
 
         this.extractSettingsData();
         if (!this.verifySettingsData())
             this.showToast("Oops! Something went wrong with settings");
         else
         {
-            if (startTimeChanged)
-                startNotification();
-
-            this.stopNotification();
+            this.handleNotification();
             this.setUpPieChart();
             this.setResetApp();
 
@@ -261,7 +260,7 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, end_min);
         calendar.set(Calendar.SECOND, 00);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         else
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
@@ -276,10 +275,11 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, end_min+1);
         calendar.set(Calendar.SECOND, 00);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        else
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+//            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+//        else
+//            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+          alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY ,pendingIntent);
     }
 
     public void setUpPieChart()
