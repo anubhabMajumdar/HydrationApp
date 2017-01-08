@@ -154,6 +154,7 @@ public class HydrationTrackerActivity extends AppCompatActivity {
     private BroadcastReceiver setNextNotification = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            extractSettingsData();
             setNotification();
         }
     };
@@ -260,7 +261,7 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, end_min);
         calendar.set(Calendar.SECOND, 00);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         else
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
@@ -290,6 +291,8 @@ public class HydrationTrackerActivity extends AppCompatActivity {
             pieChart.getDescription().setEnabled(false);
             pieChart.getLegend().setEnabled(false);
             pieChart.setTransparentCircleColor(Color.WHITE);
+            //pieChart.animateX(2000);
+            pieChart.animateY(1000);
 
             List<PieEntry> entries = new ArrayList<>();
 
