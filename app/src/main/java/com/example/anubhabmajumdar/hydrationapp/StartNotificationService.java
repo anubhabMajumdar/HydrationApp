@@ -96,7 +96,7 @@ public class StartNotificationService extends IntentService
         mBuilder.setStyle(new NotificationCompat.BigTextStyle()
                 .bigText("It's time to have a glass of water"))
                 .addAction (R.drawable.water_glass,
-                        getString(R.string.bigText_glass), pendingIntent).setAutoCancel(true);
+                        getString(R.string.bigText_glass), pendingIntent);
 
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

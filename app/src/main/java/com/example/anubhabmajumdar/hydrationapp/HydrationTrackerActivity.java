@@ -114,6 +114,16 @@ public class HydrationTrackerActivity extends AppCompatActivity {
         //showToast(notification_state);
     }
 
+    public boolean startTimeChanged()
+    {
+        SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
+
+        int sh = sharedPref.getInt(getString(R.string.start_hour), -1);
+        int sm = sharedPref.getInt(getString(R.string.start_min), -1);
+
+        return ((sh==start_hour) && (sm==start_min));
+    }
+
     public boolean verifySettingsData()
     {
         boolean flag = true;
@@ -178,12 +188,17 @@ public class HydrationTrackerActivity extends AppCompatActivity {
 
     public void handleSettings()
     {
+        boolean startTimeChanged = startTimeChanged();
+
         this.extractSettingsData();
         if (!this.verifySettingsData())
             this.showToast("Oops! Something went wrong with settings");
         else
         {
-            this.handleNotification();
+            if (startTimeChanged)
+                startNotification();
+
+            this.stopNotification();
             this.setUpPieChart();
             this.setResetApp();
 

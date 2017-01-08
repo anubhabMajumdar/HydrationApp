@@ -16,7 +16,6 @@ public class NotificationDrinkWaterService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            updateWaterConsumption();
             updatePieChart();
 
             NotificationManager mNotificationManager =
