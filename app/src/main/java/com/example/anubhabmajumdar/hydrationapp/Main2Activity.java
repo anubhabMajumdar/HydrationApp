@@ -3,7 +3,6 @@ package com.example.anubhabmajumdar.hydrationapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
@@ -137,7 +136,7 @@ public class Main2Activity extends AppCompatActivity
         this.glass_size = Integer.parseInt(sharedPref.getString(getString(R.string.glass_size), getString(R.string.glass_size_default)));
         this.totalWaterConsumption = Integer.parseInt(sharedPref.getString(getString(R.string.total_consumption), getString(R.string.totalWaterConsumption_default)));
 
-        showToast(Integer.toString(notification_interval));
+        //showToast(Integer.toString(notification_interval));
     }
 
     public void saveTotalWaterConsumption()
@@ -165,12 +164,16 @@ public class Main2Activity extends AppCompatActivity
         {
             pieChart.getDescription().setEnabled(false);
             pieChart.getLegend().setEnabled(false);
-            pieChart.setTransparentCircleColor(Color.WHITE);
-            //pieChart.animateX(2000);
+            pieChart.setTouchEnabled(false);
+            pieChart.setRotationEnabled(false);
+
+            int color_grey = getResources().getColor(R.color.grey);
+            pieChart.setBackgroundColor(color_grey);
+            pieChart.setTransparentCircleColor(color_grey);
+
             pieChart.animateY(1000);
 
             List<PieEntry> entries = new ArrayList<>();
-
             entries.add(new PieEntry(totalWaterConsumption, "Water Consumed"));
             int remaining = Math.max(0, ((int) (quantity * 1000) - totalWaterConsumption));
             entries.add(new PieEntry(remaining, "Remaining"));
