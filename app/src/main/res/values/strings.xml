@@ -2,6 +2,20 @@
     <string name="app_name">HydrationApp</string>
     <string name="first_time">Tell me about your hydration plan!</string>
     <string name="developer">Developed by Anubhab Majumdar</string>
+    <string name="hydration_data">Hydration data</string>
+
+    <string name="general">General</string>
+    <string name="start_day_key">start_day</string>
+    <string name="end_day_key">end_day</string>
+    <string name="display_name_key">display_name</string>
+    <string name="notification_state_key">notification</string>
+    <string name="ringtone_key">ringtone</string>
+    <string name="vibration_key">vibration</string>
+
+    <string name="notification_default">15</string>
+    <string name="glass_size_default">150</string>
+    <string name="quantity_default">2.5</string>
+    <string name="totalWaterConsumption_default">0</string>
 
 
     <string name="state_key">state</string>
@@ -36,6 +50,14 @@
     <string name="total_consumption">total_consumption</string>
 
 
+    <string-array name="notification_interval_array_name">
+        <item>1 min</item>
+        <item>15 min</item>
+        <item>20 min</item>
+        <item>30 min</item>
+        <item>40 min</item>
+        <item>60 min</item>
+    </string-array>
     <string-array name="notification_interval_array">
         <item>1</item>
         <item>15</item>
@@ -44,7 +66,14 @@
         <item>40</item>
         <item>60</item>
     </string-array>
-
+    <string-array name="glass_size_array_name">
+        <item>100 ml</item>
+        <item>150 ml</item>
+        <item>200 ml</item>
+        <item>300 ml</item>
+        <item>400 ml</item>
+        <item>500 ml</item>
+    </string-array>
     <string-array name="glass_size_array">
         <item>100</item>
         <item>150</item>

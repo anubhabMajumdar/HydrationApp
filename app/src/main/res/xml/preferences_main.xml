@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Hydration Data"
+        android:key="pref_key_storage_settings">
+        <com.example.anubhabmajumdar.hydrationapp.TimePreference
+            android:defaultValue="8:00"
+            android:selectAllOnFocus="true"
+            android:title="Start of Day"
+            android:dialogTitle=""
+            android:key="@string/start_day_key" />
+
+        <com.example.anubhabmajumdar.hydrationapp.TimePreference
+            android:defaultValue="23:00"
+            android:selectAllOnFocus="true"
+            android:title="End of Day"
+            android:dialogTitle=""
+            android:key="@string/end_day_key" />
+
+        <ListPreference
+            android:defaultValue="@string/notification_default"
+            android:entries="@array/notification_interval_array_name"
+            android:entryValues="@array/notification_interval_array"
+            android:key="@string/notification_interval"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="Notification Interval" />
+
+        <EditTextPreference
+            android:capitalize="words"
+            android:defaultValue="@string/quantity_default"
+            android:inputType="numberDecimal"
+            android:key="@string/quantity"
+            android:maxLength="4"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Quantity" />
+
+        <ListPreference
+            android:defaultValue="@string/glass_size_default"
+            android:entries="@array/glass_size_array_name"
+            android:entryValues="@array/glass_size_array"
+            android:key="@string/glass_size"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="Glass Size" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="General"
+        android:key="pref_key_storage_settings">
+        <EditTextPreference
+            android:capitalize="words"
+            android:defaultValue="@string/pref_default_display_name"
+            android:inputType="textCapWords"
+            android:key="@string/display_name_key"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_display_name" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Notification"
+        android:key="pref_key_storage_settings">
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/notification_state_key"
+        android:title="Hydration Remminder" />
+
+    <RingtonePreference
+        android:defaultValue="content://settings/system/notification_sound"
+        android:dependency="@string/notification_state_key"
+        android:key="@string/ringtone_key"
+        android:ringtoneType="notification"
+        android:title="@string/pref_title_ringtone" />
+
+    <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
+    <SwitchPreference
+        android:defaultValue="true"
+        android:dependency="@string/notification_state_key"
+        android:key="@string/vibration_key"
+        android:title="@string/pref_title_vibrate" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <com.example.anubhabmajumdar.hydrationapp.TimePreference
+        android:defaultValue="8:00"
+        android:selectAllOnFocus="true"
+        android:title="Start of Day"
+        android:dialogTitle=""
+        android:key="@string/start_day_key" />
+
+    <com.example.anubhabmajumdar.hydrationapp.TimePreference
+        android:defaultValue="23:00"
+        android:selectAllOnFocus="true"
+        android:title="End of Day"
+        android:dialogTitle=""
+        android:key="@string/end_day_key" />
+
+    <ListPreference
+        android:defaultValue="15"
+        android:entries="@array/notification_interval_array_name"
+        android:entryValues="@array/notification_interval_array"
+        android:key="@string/notification_interval"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="Notification Interval" />
+
+    <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="2.5"
+        android:inputType="numberDecimal"
+        android:key="@string/quantity"
+        android:maxLength="3"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Quantity" />
+
+    <ListPreference
+        android:defaultValue="150 ml"
+        android:entries="@array/glass_size_array_name"
+        android:entryValues="@array/glass_size_array"
+        android:key="@string/glass_size"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="Glass Size" />
+
+
+</PreferenceScreen>
