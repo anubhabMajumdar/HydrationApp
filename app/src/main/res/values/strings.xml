@@ -17,6 +17,7 @@
     <string name="quantity_default">2.5</string>
     <string name="totalWaterConsumption_default">0</string>
 
+    <string name="reset_name">Reset</string>
 
     <string name="state_key">state</string>
     <string name="state_default">initial</string>

@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
@@ -30,6 +31,8 @@ public class Main2Activity extends AppCompatActivity
 
     int notification_interval, glass_size, totalWaterConsumption;
     double quantity;
+    String appUser;
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +47,12 @@ public class Main2Activity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         extractSettingsData();
         setUpPieChart();
-
+        setAppUser();
     }
 
     @Override
@@ -58,6 +61,7 @@ public class Main2Activity extends AppCompatActivity
         super.onResume();
         extractSettingsData();
         setUpPieChart();
+        setAppUser();
     }
 
     @Override
@@ -120,6 +124,12 @@ public class Main2Activity extends AppCompatActivity
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         }
+        else if (id == R.id.reset)
+        {
+            totalWaterConsumption = 0;
+            saveTotalWaterConsumption();
+            setUpPieChart();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -135,7 +145,7 @@ public class Main2Activity extends AppCompatActivity
         this.quantity = Double.parseDouble(sharedPref.getString(getString(R.string.quantity), getString(R.string.quantity_default)));
         this.glass_size = Integer.parseInt(sharedPref.getString(getString(R.string.glass_size), getString(R.string.glass_size_default)));
         this.totalWaterConsumption = Integer.parseInt(sharedPref.getString(getString(R.string.total_consumption), getString(R.string.totalWaterConsumption_default)));
-
+        this.appUser = sharedPref.getString(getString(R.string.display_name_key), getString(R.string.pref_default_display_name));
         //showToast(Integer.toString(notification_interval));
     }
 
@@ -169,8 +179,7 @@ public class Main2Activity extends AppCompatActivity
 
             int color_grey = getResources().getColor(R.color.grey);
             pieChart.setBackgroundColor(color_grey);
-            pieChart.setTransparentCircleColor(color_grey);
-
+            pieChart.setHoleColor(color_grey);
             pieChart.animateY(1000);
 
             List<PieEntry> entries = new ArrayList<>();
@@ -203,5 +212,12 @@ public class Main2Activity extends AppCompatActivity
         editor.apply();
 
         setUpPieChart();
+    }
+
+    public void setAppUser()
+    {
+        View header=navigationView.getHeaderView(0);
+        TextView userName = (TextView) header.findViewById(R.id.appUser);
+        userName.setText(appUser);
     }
 }
