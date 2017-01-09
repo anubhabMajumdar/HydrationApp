@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -53,6 +54,7 @@ public class Main2Activity extends AppCompatActivity
         extractSettingsData();
         setUpPieChart();
         setAppUser();
+        multipleFAB();
     }
 
     @Override
@@ -62,6 +64,7 @@ public class Main2Activity extends AppCompatActivity
         extractSettingsData();
         setUpPieChart();
         setAppUser();
+        multipleFAB();
     }
 
     @Override
@@ -183,9 +186,9 @@ public class Main2Activity extends AppCompatActivity
             pieChart.animateY(1000);
 
             List<PieEntry> entries = new ArrayList<>();
-            entries.add(new PieEntry(totalWaterConsumption, "Water Consumed"));
+            entries.add(new PieEntry(totalWaterConsumption, "Water Consumed (in ml)"));
             int remaining = Math.max(0, ((int) (quantity * 1000) - totalWaterConsumption));
-            entries.add(new PieEntry(remaining, "Remaining"));
+            entries.add(new PieEntry(remaining, "Remaining (in ml)"));
 
             PieDataSet set = new PieDataSet(entries, "Water Consumption");
             int color_green = getResources().getColor(R.color.darkgreen);
@@ -201,7 +204,7 @@ public class Main2Activity extends AppCompatActivity
         }
     }
 
-    public void updateWaterConsumption(View v)
+    public void updateWaterConsumption(int glass_size)
     {
         totalWaterConsumption = totalWaterConsumption + glass_size;
 
@@ -220,4 +223,73 @@ public class Main2Activity extends AppCompatActivity
         TextView userName = (TextView) header.findViewById(R.id.appUser);
         userName.setText(appUser);
     }
+
+    public void multipleFAB()
+    {
+        final int[] buttonGlassSizes = glassSizesForFAB();
+
+        final FloatingActionButton actionA = (FloatingActionButton) findViewById(R.id.action_a);
+        actionA.setTitle(buttonGlassSizes[0]+" ml");
+        actionA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                updateWaterConsumption(buttonGlassSizes[0]);
+            }
+        });
+
+        final FloatingActionButton actionB = (FloatingActionButton) findViewById(R.id.action_b);
+        actionB.setTitle(buttonGlassSizes[1]+" ml");
+        actionB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                updateWaterConsumption(buttonGlassSizes[1]);
+            }
+        });
+
+        final FloatingActionButton actionC = (FloatingActionButton) findViewById(R.id.action_c);
+        actionC.setTitle(buttonGlassSizes[2]+" ml");
+        actionC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                updateWaterConsumption(buttonGlassSizes[2]);
+            }
+        });
+    }
+
+    public int[] glassSizesForFAB()
+    {
+        String[] test;
+        int[] buttonGlassSizes = {0, 0, 0};
+        int start, end, i;
+
+        test = getResources().getStringArray(R.array.glass_size_array);
+
+        int index = java.util.Arrays.asList(test).indexOf(Integer.toString(glass_size));
+
+        if (index == 0)
+        {
+            start = 0;
+            end = 2;
+        }
+        else if (index == (test.length-1))
+        {
+            start = index-2;
+            end = index;
+        }
+        else
+        {
+            start = index-1;
+            end = index+1;
+        }
+
+        for (i=start;i<=end;i++)
+            buttonGlassSizes[i-start] = Integer.parseInt(test[i]);
+
+        return buttonGlassSizes;
+
+    }
+
 }

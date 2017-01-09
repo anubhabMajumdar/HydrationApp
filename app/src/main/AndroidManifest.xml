@@ -16,9 +16,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.anubhabmajumdar.hydrationapp.MainActivity" />
         </activity>
-        <activity android:name=".HydrationTrackerActivity">
-
-        </activity>
+        <activity android:name=".HydrationTrackerActivity"></activity>
 
         <service
             android:name=".StartNotificationService"
@@ -45,7 +43,9 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".Main2Activity">
+            android:parentActivityName=".Main2Activity"></activity>
+        <activity android:name=".fabTest">
+
         </activity>
     </application>
 
