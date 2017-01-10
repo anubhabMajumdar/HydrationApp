@@ -14,6 +14,21 @@
         </menu>
     </item>
 
+    <item android:title="Revert">
+        <menu>
+            <item
+                android:id="@+id/undo"
+                android:orderInCategory="100"
+                android:title="@string/undo_name"
+                android:icon="@drawable/undo" />
+            <item
+                android:id="@+id/reset"
+                android:orderInCategory="100"
+                android:title="@string/reset_name"
+                android:icon="@android:drawable/ic_dialog_alert" />
+        </menu>
+    </item>
+
     <item android:title="Settings">
         <menu>
             <item
@@ -23,11 +38,5 @@
                 android:icon="@drawable/settings" />
         </menu>
     </item>
-
-    <item
-        android:id="@+id/reset"
-        android:orderInCategory="100"
-        android:title="@string/reset_name"
-        android:icon="@drawable/undo" />
 
 </menu>

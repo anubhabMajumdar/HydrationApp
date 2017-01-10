@@ -1,6 +1,7 @@
 package com.example.anubhabmajumdar.hydrationapp;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.app.AlertDialog;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.github.mikephil.charting.charts.PieChart;
@@ -24,8 +26,10 @@ import com.github.mikephil.charting.data.PieEntry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import static com.example.anubhabmajumdar.hydrationapp.R.id.chart;
+import static java.lang.Integer.parseInt;
 
 public class Main2Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,6 +38,7 @@ public class Main2Activity extends AppCompatActivity
     double quantity;
     String appUser;
     NavigationView navigationView;
+    Stack waterConsumptionStack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,9 +134,29 @@ public class Main2Activity extends AppCompatActivity
         }
         else if (id == R.id.reset)
         {
-            totalWaterConsumption = 0;
-            saveTotalWaterConsumption();
-            setUpPieChart();
+            new AlertDialog.Builder(this)
+                    .setTitle("Reset water consumption data?")
+                    .setMessage("Are you sure you want to reset this entry?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue with delete
+                            totalWaterConsumption = 0;
+                            saveTotalWaterConsumption();
+                            setWaterConsumptionStack(new Stack());
+                            setUpPieChart();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+        else if (id == R.id.undo)
+        {
+            undoWaterConsumption();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -144,11 +169,13 @@ public class Main2Activity extends AppCompatActivity
     {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        this.notification_interval = Integer.parseInt(sharedPref.getString(getString(R.string.notification_interval), getString(R.string.notification_default)));
+        this.notification_interval = parseInt(sharedPref.getString(getString(R.string.notification_interval), getString(R.string.notification_default)));
         this.quantity = Double.parseDouble(sharedPref.getString(getString(R.string.quantity), getString(R.string.quantity_default)));
-        this.glass_size = Integer.parseInt(sharedPref.getString(getString(R.string.glass_size), getString(R.string.glass_size_default)));
-        this.totalWaterConsumption = Integer.parseInt(sharedPref.getString(getString(R.string.total_consumption), getString(R.string.totalWaterConsumption_default)));
+        this.glass_size = parseInt(sharedPref.getString(getString(R.string.glass_size), getString(R.string.glass_size_default)));
+        this.totalWaterConsumption = parseInt(sharedPref.getString(getString(R.string.total_consumption), getString(R.string.totalWaterConsumption_default)));
         this.appUser = sharedPref.getString(getString(R.string.display_name_key), getString(R.string.pref_default_display_name));
+        this.waterConsumptionStack = deserialize
+                (sharedPref.getString(getString(R.string.waterConsumptionStack_key), serialize(new Stack())));
         //showToast(Integer.toString(notification_interval));
     }
 
@@ -208,11 +235,8 @@ public class Main2Activity extends AppCompatActivity
     {
         totalWaterConsumption = totalWaterConsumption + glass_size;
 
-        SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-
-        editor.putInt(getString(R.string.total_consumption), totalWaterConsumption);
-        editor.apply();
+        saveTotalWaterConsumption();
+        updateLatestWaterConsumption(totalWaterConsumption);
 
         setUpPieChart();
     }
@@ -286,10 +310,89 @@ public class Main2Activity extends AppCompatActivity
         }
 
         for (i=start;i<=end;i++)
-            buttonGlassSizes[i-start] = Integer.parseInt(test[i]);
+            buttonGlassSizes[i-start] = parseInt(test[i]);
 
         return buttonGlassSizes;
+    }
 
+    public void updateLatestWaterConsumption(int totalWaterConsumption)
+    {
+        waterConsumptionStack = getWaterConsumptionStack();
+        waterConsumptionStack.push(totalWaterConsumption);
+        setWaterConsumptionStack(waterConsumptionStack);
+    }
+
+    public void undoWaterConsumption()
+    {
+        waterConsumptionStack = getWaterConsumptionStack();
+
+        if (!waterConsumptionStack.empty())
+        {
+            waterConsumptionStack.pop();
+
+            if (waterConsumptionStack.empty())
+                totalWaterConsumption = 0;
+            else
+                totalWaterConsumption = (Integer) waterConsumptionStack.peek();
+
+            setWaterConsumptionStack(waterConsumptionStack);
+            saveTotalWaterConsumption();
+            setUpPieChart();
+            //showToast("non empty undoWaterConsumption");
+        }
+
+    }
+
+    public Stack getWaterConsumptionStack()
+    {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        Stack waterConsumptionStack = deserialize
+                (sharedPref.getString(getString(R.string.waterConsumptionStack_key), serialize(new Stack())));
+
+        return waterConsumptionStack;
+    }
+
+    public void setWaterConsumptionStack(Stack waterConsumptionStack)
+    {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putString(getString(R.string.waterConsumptionStack_key), serialize(waterConsumptionStack));
+        editor.apply();
+    }
+
+    public String serialize(Stack stack)
+    {
+        String serializedArrayList = "";
+
+        if (stack.empty())
+            return serializedArrayList;
+
+        while (!stack.empty())
+        {
+            serializedArrayList = serializedArrayList + Integer.toString((Integer) stack.pop()) + ",";
+        }
+
+        serializedArrayList = serializedArrayList.substring(0, serializedArrayList.length()-1);
+        //showToast(serializedArrayList);
+        return  serializedArrayList;
+    }
+
+    public Stack deserialize(String serializedArrayList)
+    {
+        Stack waterConsumptionStack = new Stack();
+
+        if (serializedArrayList.equals(""))
+            return waterConsumptionStack;
+
+        String[] numbers = serializedArrayList.split(",");
+
+
+        for (int i=(numbers.length-1); i>=0; i--)
+            waterConsumptionStack.push(Integer.parseInt(numbers[i]));
+
+        return waterConsumptionStack;
     }
 
 }
