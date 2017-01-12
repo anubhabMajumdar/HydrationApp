@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 public class StopNotificationService extends IntentService {
 
@@ -27,7 +28,11 @@ public class StopNotificationService extends IntentService {
         Intent myIntent = new Intent(this , StartNotificationService.class);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
-        alarmManager.cancel(pendingIntent);
+        if (alarmManager!=null)
+            alarmManager.cancel(pendingIntent);
+
+        Intent intentNotification = new Intent(getString(R.string.reset_name));
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intentNotification);
      }
 
 

@@ -6,19 +6,11 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
-/**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
- */
 public class StartNotificationService extends IntentService
 {
 
@@ -34,28 +26,26 @@ public class StartNotificationService extends IntentService
     @Override
     protected void onHandleIntent(Intent intent)
     {
-        SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
-        String notification_state = sharedPref.getString(getString(R.string.notification_state), getString(R.string.normal_notification));
-        String no_n = getString(R.string.no_notification);
+//        SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
+//        String notification_state = sharedPref.getString(getString(R.string.notification_state), getString(R.string.normal_notification));
+//        String no_n = getString(R.string.no_notification);
+//
+//        if (intent != null)
+//        {
+//            if (!notification_state.equals(no_n))
+//                this.sendNotification();
+//
+//            Intent intentNotification = new Intent(getString(R.string.setNextNotification));
+//            LocalBroadcastManager.getInstance(this).sendBroadcast(intentNotification);
+//        }
 
-        if (intent != null)
-        {
-            if (!notification_state.equals(no_n))
-                this.sendNotification();
-
-            Intent intentNotification = new Intent(getString(R.string.setNextNotification));
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intentNotification);
-        }
+        sendNotification();
+        Intent intentNotification = new Intent(getString(R.string.setNextNotification));
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intentNotification);
     }
 
     public void sendNotification()
     {
-
-        SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
-        String notification_state = sharedPref.getString(getString(R.string.notification_state), getString(R.string.normal_notification));
-        String normal_n = getString(R.string.normal_notification);
-
-
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
@@ -63,7 +53,7 @@ public class StartNotificationService extends IntentService
                         .setContentTitle("Drink water")
                         .setContentText("It's time to have a glass of water!");
         // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, HydrationTrackerActivity.class);
+        Intent resultIntent = new Intent(this, Main2Activity.class);
 
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
@@ -82,21 +72,21 @@ public class StartNotificationService extends IntentService
 
         mBuilder.setContentIntent(resultPendingIntent);
 
-        if (notification_state.equals(normal_n))
-        {
+        //if (notification_state.equals(normal_n))
+        //{
             Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             mBuilder.setSound(alarmSound);
-        }
+        //}
 
         mBuilder.setAutoCancel(true);
 
-        Intent drinkWater = new Intent(this, NotificationDrinkWaterService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, drinkWater, 0);
-
-        mBuilder.setStyle(new NotificationCompat.BigTextStyle()
-                .bigText("It's time to have a glass of water"))
-                .addAction (R.drawable.water_glass,
-                        getString(R.string.bigText_glass), pendingIntent);
+//        Intent drinkWater = new Intent(this, NotificationDrinkWaterService.class);
+//        PendingIntent pendingIntent = PendingIntent.getService(this, 0, drinkWater, 0);
+//
+//        mBuilder.setStyle(new NotificationCompat.BigTextStyle()
+//                .bigText("It's time to have a glass of water"))
+//                .addAction (R.drawable.water_glass,
+//                        getString(R.string.bigText_glass), pendingIntent);
 
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
