@@ -31,10 +31,8 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 
@@ -47,6 +45,7 @@ public class Main2Activity extends AppCompatActivity
     int notification_interval, glass_size, totalWaterConsumption;
     double quantity;
     String appUser, start_day, end_day;
+    Boolean wantNotification;
     NavigationView navigationView;
     Stack waterConsumptionStack;
 
@@ -92,8 +91,18 @@ public class Main2Activity extends AppCompatActivity
 
         extractSettingsData();
 
-        setNotification();
-        stopNotification();
+        if (wantNotification) {
+            if (withinTime()) {
+                setNotification();
+                //showToast("setNotif");
+            } else {
+                startNotification();
+                //showToast("StartNotif");
+            }
+            stopNotification();
+        }
+        else
+            cancelNotification();
 
         //showToast("onResume");
         setUpPieChart();
@@ -207,7 +216,10 @@ public class Main2Activity extends AppCompatActivity
         this.appUser = sharedPref.getString(getString(R.string.display_name_key), getString(R.string.pref_default_display_name));
         this.waterConsumptionStack = deserialize
                 (sharedPref.getString(getString(R.string.waterConsumptionStack_key), serialize(new Stack())));
-        //showToast(Integer.toString(notification_interval));
+        this.wantNotification = sharedPref.getBoolean(getString(R.string.notification_state_key), true);
+        //String ringtone = sharedPref.getString(getString(R.string.ringtone_key), getString(R.string.default_ringtone));
+        //showToast(Boolean.toString(wantNotification));
+        //showToast(ringtone);
     }
 
     public void saveTotalWaterConsumption()
@@ -428,51 +440,61 @@ public class Main2Activity extends AppCompatActivity
 
     public void startNotification()
     {
-        int[] time = splitTime(start_day);
+        //showToast("In startNotif");
+        int[] time_start = splitTime(start_day);
+        int[] time_end = splitTime(end_day);
 
         Intent intent = new Intent(this , StartNotificationService.class);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, time[0]);
-        calendar.set(Calendar.MINUTE, time[1]);
-        calendar.set(Calendar.SECOND, 00);
+
+        Calendar start_date = Calendar.getInstance();
+        start_date.set(Calendar.HOUR_OF_DAY, time_start[0]);
+        start_date.set(Calendar.MINUTE, time_start[1]);
+        start_date.set(Calendar.SECOND, 00);
+
+        Calendar end_date = Calendar.getInstance();
+        end_date.set(Calendar.HOUR_OF_DAY, time_end[0]);
+        end_date.set(Calendar.MINUTE, time_end[1]);
+        end_date.set(Calendar.SECOND, 00);
+
+//        Calendar now = Calendar.getInstance();
+//
+//        if (end_date.before(now))
+//        {
+//            start_date.add(Calendar.DAY_OF_MONTH, 1);
+//            //showToast("Setting start alarm 1 day after");
+//        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, start_date.getTimeInMillis(), pendingIntent);
         }
         else
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, start_date.getTimeInMillis(), pendingIntent);
     }
 
-    public void startNotification2()
+    public boolean withinTime()
     {
-        int[] time = splitTime(start_day);
+        int[] time_start = splitTime(start_day);
+        int[] time_end = splitTime(end_day);
 
-        Intent intent = new Intent(this , StartNotificationService.class);
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
+        Calendar start_date = Calendar.getInstance();
+        start_date.set(Calendar.HOUR_OF_DAY, time_start[0]);
+        start_date.set(Calendar.MINUTE, time_start[1]);
+        start_date.set(Calendar.SECOND, 00);
 
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        try
-        {
-            Date date1 = format.parse(start_day);
-            Date date2 = format.parse(end_day);
-            long difference = date2.getTime() - date1.getTime();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                        SystemClock.elapsedRealtime() + difference, pendingIntent);
-            }
-            else
-                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                        SystemClock.elapsedRealtime() + difference, pendingIntent);
-        }
-        catch (java.text.ParseException e)
-        {
-            e.printStackTrace();
-        }
+        Calendar end_date = Calendar.getInstance();
+        end_date.set(Calendar.HOUR_OF_DAY, time_end[0]);
+        end_date.set(Calendar.MINUTE, time_end[1]);
+        end_date.set(Calendar.SECOND, 00);
+
+        Calendar now = Calendar.getInstance();
+
+        return ((start_date.before(now)) && (end_date.after(now)));
+
     }
+
 
     public void stopNotification()
     {
@@ -515,7 +537,8 @@ public class Main2Activity extends AppCompatActivity
         @Override
         public void onReceive(Context context, Intent intent) {
             extractSettingsData();
-            startNotification2();
+            startNotification();
+            stopNotification();
             resetWaterConsumption();
             setUpPieChart();
         }
@@ -558,6 +581,15 @@ public class Main2Activity extends AppCompatActivity
         int cur_notification_interval = Integer.parseInt(sharedPref.getString(getString(R.string.notification_interval), "-1"));
 
         return (cur_notification_interval == notification_interval);
+    }
+
+    public void cancelNotification()
+    {
+        Intent myIntent = new Intent(this , StartNotificationService.class);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
+        if (alarmManager!=null)
+            alarmManager.cancel(pendingIntent);
     }
 
     public void resetWaterConsumption()

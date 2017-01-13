@@ -71,7 +71,7 @@
         android:title="Hydration Remminder" />
 
     <RingtonePreference
-        android:defaultValue="content://settings/system/notification_sound"
+        android:defaultValue="@string/default_ringtone"
         android:dependency="@string/notification_state_key"
         android:key="@string/ringtone_key"
         android:ringtoneType="notification"

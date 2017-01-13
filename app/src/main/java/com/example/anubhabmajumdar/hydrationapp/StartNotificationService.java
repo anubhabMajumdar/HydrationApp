@@ -6,8 +6,9 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -26,25 +27,20 @@ public class StartNotificationService extends IntentService
     @Override
     protected void onHandleIntent(Intent intent)
     {
-//        SharedPreferences sharedPref = getSharedPreferences("Settings", Context.MODE_PRIVATE);
-//        String notification_state = sharedPref.getString(getString(R.string.notification_state), getString(R.string.normal_notification));
-//        String no_n = getString(R.string.no_notification);
-//
-//        if (intent != null)
-//        {
-//            if (!notification_state.equals(no_n))
-//                this.sendNotification();
-//
-//            Intent intentNotification = new Intent(getString(R.string.setNextNotification));
-//            LocalBroadcastManager.getInstance(this).sendBroadcast(intentNotification);
-//        }
 
-        sendNotification();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String notification_sound = sharedPref.getString(getString(R.string.ringtone_key), getString(R.string.default_ringtone));
+        Boolean vibrate = sharedPref.getBoolean(getString(R.string.vibration_key), true);
+
+        Uri alarmSound = Uri.parse(notification_sound);
+
+        sendNotification(alarmSound, vibrate);
         Intent intentNotification = new Intent(getString(R.string.setNextNotification));
         LocalBroadcastManager.getInstance(this).sendBroadcast(intentNotification);
     }
 
-    public void sendNotification()
+    public void sendNotification(Uri alarmSound, boolean vibrate)
     {
 
         NotificationCompat.Builder mBuilder =
@@ -72,11 +68,9 @@ public class StartNotificationService extends IntentService
 
         mBuilder.setContentIntent(resultPendingIntent);
 
-        //if (notification_state.equals(normal_n))
-        //{
-            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            mBuilder.setSound(alarmSound);
-        //}
+        mBuilder.setSound(alarmSound);
+        if (vibrate)
+            mBuilder.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
 
         mBuilder.setAutoCancel(true);
 

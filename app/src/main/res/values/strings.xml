@@ -17,6 +17,7 @@
     <string name="glass_size_default">150</string>
     <string name="quantity_default">2.5</string>
     <string name="totalWaterConsumption_default">0</string>
+    <string name="default_ringtone">content://settings/system/notification_sound</string>
 
     <string name="reset_name">Reset</string>
     <string name="undo_name">Undo</string>
