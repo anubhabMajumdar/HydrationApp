@@ -1,20 +1,16 @@
 package com.example.anubhabmajumdar.hydrationapp;
 
 import android.app.AlarmManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -71,13 +67,20 @@ public class MainActivity extends AppCompatActivity
                 new IntentFilter(getString(R.string.setNextNotification)));
         LocalBroadcastManager.getInstance(this).registerReceiver(drinkBroadcast,
                 new IntentFilter(getString(R.string.drink_broadcast)));
+        LocalBroadcastManager.getInstance(this).registerReceiver(reset,
+                new IntentFilter(getString(R.string.reset_name)));
 
+//        boolean timeChanged = changedTime();
         extractSettingsData();
         setUpPieChart();
         setAppUser();
         multipleFAB();
-        //setRepeatingAlarm();
-        dummyNotification();
+//        if (!timeChanged)
+//        {
+//            setRepeatingAlarm();
+//            stopAlarm();
+//        }
+//        showToast("onCreate");
     }
 
     @Override
@@ -85,12 +88,17 @@ public class MainActivity extends AppCompatActivity
     {
         super.onResume();
 
+        boolean timeChanged = changedTime();
         extractSettingsData();
-        //setRepeatingAlarm();
-        dummyNotification();
+        if (!timeChanged)
+        {
+            setRepeatingAlarm();
+            stopAlarm();
+        }
         setUpPieChart();
         setAppUser();
         multipleFAB();
+//        showToast("onResume");
     }
 
     @Override
@@ -446,9 +454,19 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
+    private BroadcastReceiver reset = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            extractSettingsData();
+            //setRepeatingAlarm(timeDifference());
+            resetWaterConsumption();
+            setUpPieChart();
+        }
+    };
+
     public void setRepeatingAlarm()
     {
-        showToast("Set Repeating");
+        //showToast("Set Repeating");
         int[] time = splitTime(start_day);
 
         AlarmManager alarmMgr;
@@ -456,18 +474,71 @@ public class MainActivity extends AppCompatActivity
 
         alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, StartNotificationService.class);
-        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        alarmIntent = PendingIntent.getService(this, 0, intent, 0);
 
         // Set the alarm to start at 8:30 a.m.
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 8);
-        calendar.set(Calendar.MINUTE, 30);
+        calendar.set(Calendar.HOUR_OF_DAY, time[0]);
+        calendar.set(Calendar.MINUTE, time[1]);
+        //calendar.set(Calendar.AM_PM, Calendar.AM);
 
         // setRepeating() lets you specify a precise custom interval--in this case,
         // 20 minutes.
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 1000 * 60 * notification_interval, alarmIntent);
+    }
+
+    public void setRepeatingAlarm(long diff)
+    {
+        //showToast("Set Repeating diff");
+        int[] time = splitTime(start_day);
+
+        AlarmManager alarmMgr;
+        PendingIntent alarmIntent;
+
+        alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, StartNotificationService.class);
+        alarmIntent = PendingIntent.getService(this, 0, intent, 0);
+
+        // Set the alarm to start at 8:30 a.m.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        showToast(Long.toString(System.currentTimeMillis()));
+
+//        calendar.set(Calendar.HOUR_OF_DAY, time[0]);
+//        calendar.set(Calendar.MINUTE, time[1]);
+        //calendar.set(Calendar.AM_PM, Calendar.AM);
+
+        // setRepeating() lets you specify a precise custom interval--in this case,
+        // 20 minutes.
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis()+diff,
+                1000 * 60 * notification_interval, alarmIntent);
+    }
+
+    public void stopAlarm()
+    {
+        //showToast("Set stop alarm");
+        int[] time = splitTime(end_day);
+
+        AlarmManager alarmMgr;
+        PendingIntent alarmIntent;
+
+        alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, StopNotificationService.class);
+        alarmIntent = PendingIntent.getService(this, 0, intent, 0);
+
+        // Set the alarm to start at 8:30 a.m.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, time[0]);
+        calendar.set(Calendar.MINUTE, time[1]);
+        //calendar.set(Calendar.AM_PM, Calendar.AM);
+
+        // setRepeating() lets you specify a precise custom interval--in this case,
+        // 20 minutes.
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, alarmIntent);
     }
 
     public int[] splitTime(String timeString)
@@ -476,63 +547,41 @@ public class MainActivity extends AppCompatActivity
         int[] actualTime = {0,0};
         actualTime[0] = Integer.parseInt(time[0]);
         actualTime[1] = Integer.parseInt(time[1]);
-        showToast(Integer.toString(actualTime[0]));
+        //showToast(Integer.toString(actualTime[0]));
         return actualTime;
     }
 
-    public void dummyNotification()
+    public long timeDifference()
     {
-        int mId = 2;
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String notification_sound = sharedPref.getString(getString(R.string.ringtone_key), getString(R.string.default_ringtone));
-        Boolean vibrate = sharedPref.getBoolean(getString(R.string.vibration_key), true);
+        long curTime = System.currentTimeMillis();
 
-        Uri alarmSound = Uri.parse(notification_sound);
+        int[] time = splitTime(start_day);
+        long startTime = ((time[0]*60) + time[1])*60*1000;
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.water_glass)
-                        .setContentTitle("Drink water")
-                        .setContentText("It's time to have a glass of water!");
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, MainActivity.class);
+        long diff;
 
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-        // your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MainActivity.class);
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-
-        mBuilder.setContentIntent(resultPendingIntent);
-
-        mBuilder.setSound(alarmSound);
-        if (vibrate)
-            mBuilder.setVibrate(new long[] { 100, 100, 100, 100, 100 });
-
-        mBuilder.setAutoCancel(true);
-
-        Intent drinkWater = new Intent(this, NotificationDrinkWaterService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, drinkWater, 0);
-
-        mBuilder.setStyle(new NotificationCompat.BigTextStyle()
-                .bigText("It's time to have a glass of water"))
-                .addAction (R.drawable.water_glass,
-                        getString(R.string.bigText_glass), pendingIntent);
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // mId allows you to update the notification later on.
-        mNotificationManager.notify(mId, mBuilder.build());
+        if (curTime>startTime)
+        {
+            diff = ((24*60*60*1000) - curTime) + startTime;
+        }
+        else
+        {
+            diff = startTime-curTime;
+        }
+        return diff;
     }
+
+    public boolean changedTime()
+    {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String tempStartTime = sharedPref.getString(getString(R.string.start_day_key), "8:00");
+        String tempEndTime = sharedPref.getString(getString(R.string.end_day_key), "23:00");
+        int tempNotificationInterval = parseInt(sharedPref.getString(getString(R.string.notification_interval), getString(R.string.notification_default)));
+
+        return (tempStartTime.equals(this.start_day) && tempEndTime.equals(this.end_day) && (tempNotificationInterval==this.notification_interval));
+
+    }
+
 
 }
