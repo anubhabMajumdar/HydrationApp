@@ -33,5 +33,6 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
     compile 'com.android.support:support-vector-drawable:25.1.0'
     compile 'com.getbase:floatingactionbutton:1.10.1'
+    compile 'com.firebase:firebase-jobdispatcher:0.5.2'
     testCompile 'junit:junit:4.12'
 }

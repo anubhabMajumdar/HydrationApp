@@ -1,8 +1,6 @@
 import android.content.Intent;
 import android.view.MenuItem;
 
-import com.example.anubhabmajumdar.hydrationapp.HydrationSettingActivity;
-
 /**
  * Created by anubhabmajumdar on 1/4/17.
  */

@@ -57,7 +57,7 @@ public class StartNotificationService extends IntentService
         // your application to the Home screen.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(HydrationTrackerActivity.class);
+        stackBuilder.addParentStack(Main2Activity.class);
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
@@ -70,17 +70,17 @@ public class StartNotificationService extends IntentService
 
         mBuilder.setSound(alarmSound);
         if (vibrate)
-            mBuilder.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
+            mBuilder.setVibrate(new long[] { 100, 100, 100, 100, 100 });
 
         mBuilder.setAutoCancel(true);
 
-//        Intent drinkWater = new Intent(this, NotificationDrinkWaterService.class);
-//        PendingIntent pendingIntent = PendingIntent.getService(this, 0, drinkWater, 0);
-//
-//        mBuilder.setStyle(new NotificationCompat.BigTextStyle()
-//                .bigText("It's time to have a glass of water"))
-//                .addAction (R.drawable.water_glass,
-//                        getString(R.string.bigText_glass), pendingIntent);
+        Intent drinkWater = new Intent(this, NotificationDrinkWaterService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, drinkWater, 0);
+
+        mBuilder.setStyle(new NotificationCompat.BigTextStyle()
+                .bigText("It's time to have a glass of water"))
+                .addAction (R.drawable.water_glass,
+                        getString(R.string.bigText_glass), pendingIntent);
 
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

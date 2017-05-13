@@ -12,6 +12,8 @@
     <string name="ringtone_key">ringtone</string>
     <string name="vibration_key">vibration</string>
     <string name="waterConsumptionStack_key">waterConsumptionStack</string>
+    <string name="drink_broadcast">drinkBroadcast</string>
+
 
     <string name="notification_default">15</string>
     <string name="glass_size_default">150</string>
