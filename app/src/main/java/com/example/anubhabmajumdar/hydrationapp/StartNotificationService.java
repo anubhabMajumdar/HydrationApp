@@ -49,7 +49,7 @@ public class StartNotificationService extends IntentService
                         .setContentTitle("Drink water")
                         .setContentText("It's time to have a glass of water!");
         // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, Main2Activity.class);
+        Intent resultIntent = new Intent(this, MainActivity.class);
 
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
@@ -57,7 +57,7 @@ public class StartNotificationService extends IntentService
         // your application to the Home screen.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(Main2Activity.class);
+        stackBuilder.addParentStack(MainActivity.class);
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =

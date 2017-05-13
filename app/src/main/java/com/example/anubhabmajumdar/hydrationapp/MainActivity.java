@@ -1,12 +1,21 @@
 package com.example.anubhabmajumdar.hydrationapp;
 
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -25,13 +34,14 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Stack;
 
 import static com.example.anubhabmajumdar.hydrationapp.R.id.chart;
 import static java.lang.Integer.parseInt;
 
-public class Main2Activity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     int notification_interval, glass_size, totalWaterConsumption;
@@ -57,10 +67,17 @@ public class Main2Activity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(setNextNotification,
+                new IntentFilter(getString(R.string.setNextNotification)));
+        LocalBroadcastManager.getInstance(this).registerReceiver(drinkBroadcast,
+                new IntentFilter(getString(R.string.drink_broadcast)));
+
         extractSettingsData();
         setUpPieChart();
         setAppUser();
         multipleFAB();
+        //setRepeatingAlarm();
+        dummyNotification();
     }
 
     @Override
@@ -69,7 +86,8 @@ public class Main2Activity extends AppCompatActivity
         super.onResume();
 
         extractSettingsData();
-
+        //setRepeatingAlarm();
+        dummyNotification();
         setUpPieChart();
         setAppUser();
         multipleFAB();
@@ -409,6 +427,112 @@ public class Main2Activity extends AppCompatActivity
         totalWaterConsumption = 0;
         saveTotalWaterConsumption();
         setWaterConsumptionStack(new Stack());
+    }
+
+
+/* ------------------------------------ Notifications -----------------------------------------------------------*/
+    private BroadcastReceiver setNextNotification = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            extractSettingsData();
+        }
+    };
+
+    private BroadcastReceiver drinkBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateWaterConsumption(glass_size);
+            extractSettingsData();
+        }
+    };
+
+    public void setRepeatingAlarm()
+    {
+        showToast("Set Repeating");
+        int[] time = splitTime(start_day);
+
+        AlarmManager alarmMgr;
+        PendingIntent alarmIntent;
+
+        alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, StartNotificationService.class);
+        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        // Set the alarm to start at 8:30 a.m.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 8);
+        calendar.set(Calendar.MINUTE, 30);
+
+        // setRepeating() lets you specify a precise custom interval--in this case,
+        // 20 minutes.
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                1000 * 60 * notification_interval, alarmIntent);
+    }
+
+    public int[] splitTime(String timeString)
+    {
+        String[] time = timeString.split(":");
+        int[] actualTime = {0,0};
+        actualTime[0] = Integer.parseInt(time[0]);
+        actualTime[1] = Integer.parseInt(time[1]);
+        showToast(Integer.toString(actualTime[0]));
+        return actualTime;
+    }
+
+    public void dummyNotification()
+    {
+        int mId = 2;
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String notification_sound = sharedPref.getString(getString(R.string.ringtone_key), getString(R.string.default_ringtone));
+        Boolean vibrate = sharedPref.getBoolean(getString(R.string.vibration_key), true);
+
+        Uri alarmSound = Uri.parse(notification_sound);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.water_glass)
+                        .setContentTitle("Drink water")
+                        .setContentText("It's time to have a glass of water!");
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, MainActivity.class);
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        mBuilder.setSound(alarmSound);
+        if (vibrate)
+            mBuilder.setVibrate(new long[] { 100, 100, 100, 100, 100 });
+
+        mBuilder.setAutoCancel(true);
+
+        Intent drinkWater = new Intent(this, NotificationDrinkWaterService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, drinkWater, 0);
+
+        mBuilder.setStyle(new NotificationCompat.BigTextStyle()
+                .bigText("It's time to have a glass of water"))
+                .addAction (R.drawable.water_glass,
+                        getString(R.string.bigText_glass), pendingIntent);
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(mId, mBuilder.build());
     }
 
 }

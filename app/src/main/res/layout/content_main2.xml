@@ -11,7 +11,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:backgroundTint="@color/blue"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.anubhabmajumdar.hydrationapp.Main2Activity"
+    tools:context="com.example.anubhabmajumdar.hydrationapp.MainActivity"
     tools:showIn="@layout/app_bar_main2">
 
 </RelativeLayout>
