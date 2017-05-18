@@ -458,9 +458,9 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onReceive(Context context, Intent intent) {
             extractSettingsData();
-            //setRepeatingAlarm(timeDifference());
             resetWaterConsumption();
             setUpPieChart();
+            //setRepeatingAlarm(timeDifference());
         }
     };
 
@@ -491,7 +491,7 @@ public class MainActivity extends AppCompatActivity
 
     public void setRepeatingAlarm(long diff)
     {
-        //showToast("Set Repeating diff");
+        showToast("Set Repeating diff " + Long.toString(diff));
         int[] time = splitTime(start_day);
 
         AlarmManager alarmMgr;
@@ -503,8 +503,8 @@ public class MainActivity extends AppCompatActivity
 
         // Set the alarm to start at 8:30 a.m.
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        showToast(Long.toString(System.currentTimeMillis()));
+        calendar.setTimeInMillis(System.currentTimeMillis()+diff);
+        //showToast(Long.toString(System.currentTimeMillis()));
 
 //        calendar.set(Calendar.HOUR_OF_DAY, time[0]);
 //        calendar.set(Calendar.MINUTE, time[1]);
@@ -512,7 +512,7 @@ public class MainActivity extends AppCompatActivity
 
         // setRepeating() lets you specify a precise custom interval--in this case,
         // 20 minutes.
-        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis()+diff,
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 1000 * 60 * notification_interval, alarmIntent);
     }
 
