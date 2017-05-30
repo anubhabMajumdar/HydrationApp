@@ -9,11 +9,7 @@ Hydration App that tracks your water consumption throughout the day.
 * Various glass sizes are available to perfectly track your water consumption
 
 # Screenshots of APP
-![Alt text](/screenshots/ss1.png?raw=true "Water tracker")
-![Alt text](/screenshots/ss2.png?raw=true "Add water consumption")
-![Alt text](/screenshots/ss3.png?raw=true "Navigation drawer")
-![Alt text](/screenshots/ss4.png?raw=true "Settings")
-![Alt text](/screenshots/ss5.png?raw=true "Notification")
+Please checkout the [HydrationApp ScreenShots]
 
 # Language and Libraries
 * Android SDK
@@ -23,4 +19,4 @@ Hydration App that tracks your water consumption throughout the day.
 
    [Floating Action Button]: <https://github.com/Clans/FloatingActionButton>
    [MPAndroidChart]: <https://github.com/PhilJay/MPAndroidChart>
-   
+   [HydrationApp ScreenShots]: <https://goo.gl/photos/ccojsXZE11Pzi5pe8>
