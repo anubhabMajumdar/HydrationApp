@@ -13,7 +13,7 @@ Hydration App that tracks your water consumption throughout the day.
 ![Alt text](/screenshots/ss2.png?raw=true "Add water consumption")
 ![Alt text](/screenshots/ss3.png?raw=true "Navigation drawer")
 ![Alt text](/screenshots/ss4.png?raw=true "Settings")
-![Alt text](/screenshots/ss5.png?raw=true "Notification
+![Alt text](/screenshots/ss5.png?raw=true "Notification)
 
 # Language and Libraries
 * Android SDK
