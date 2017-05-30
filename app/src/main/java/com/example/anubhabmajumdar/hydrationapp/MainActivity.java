@@ -18,6 +18,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -460,7 +461,7 @@ public class MainActivity extends AppCompatActivity
             extractSettingsData();
             resetWaterConsumption();
             setUpPieChart();
-            //setRepeatingAlarm(timeDifference());
+            setRepeatingAlarm(timeDifference());
         }
     };
 
@@ -503,7 +504,10 @@ public class MainActivity extends AppCompatActivity
 
         // Set the alarm to start at 8:30 a.m.
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis()+diff);
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        long curTime = ((calendar.get(calendar.HOUR_OF_DAY)*60) + calendar.get(calendar.MINUTE))*60*1000;
+        curTime += diff;
+
         //showToast(Long.toString(System.currentTimeMillis()));
 
 //        calendar.set(Calendar.HOUR_OF_DAY, time[0]);
@@ -512,8 +516,9 @@ public class MainActivity extends AppCompatActivity
 
         // setRepeating() lets you specify a precise custom interval--in this case,
         // 20 minutes.
-        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, curTime,
                 1000 * 60 * notification_interval, alarmIntent);
+        Log.v("ReapeatAlarm", Long.toString(curTime));
     }
 
     public void stopAlarm()
@@ -553,7 +558,9 @@ public class MainActivity extends AppCompatActivity
 
     public long timeDifference()
     {
-        long curTime = System.currentTimeMillis();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        long curTime = ((calendar.get(calendar.HOUR_OF_DAY)*60) + calendar.get(calendar.MINUTE))*60*1000;
 
         int[] time = splitTime(start_day);
         long startTime = ((time[0]*60) + time[1])*60*1000;
@@ -568,6 +575,10 @@ public class MainActivity extends AppCompatActivity
         {
             diff = startTime-curTime;
         }
+
+        Log.v("timeDifference_curtime", Long.toString(curTime));
+        Log.v("timeDifference_start", Long.toString(startTime));
+        Log.v("timeDifference", Long.toString(diff));
         return diff;
     }
 
